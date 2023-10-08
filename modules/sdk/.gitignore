@@ -1,0 +1,10 @@
+.env
+__tests__/test-module.js
+**/**/test-module.js
+**/test-module.js
+*/test-module.js
+test-module.js
+lib/**
+*/lib/*
+**/lib/**
+lib/*
