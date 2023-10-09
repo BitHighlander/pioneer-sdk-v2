@@ -77,11 +77,11 @@ const test_service = async function (this: any) {
         // log.info(tag,"pubkeys: ",app.pubkeys)
         // log.info(tag,"balances: ",app.balances)
         // log.info(tag,"nfts: ",app.nfts)
-        log.debug(tag,"wallets: ",app.wallets)
-        log.info(tag,"pubkeys: ",app.pubkeys.length)
-        log.info(tag,"balances: ",app.balances.length)
-        log.info(tag,"nfts: ",app.nfts.length)
-        log.info(tag,"context: ",app.context)
+        // log.debug(tag,"wallets: ",app.wallets)
+        // log.info(tag,"pubkeys: ",app.pubkeys.length)
+        // // log.info(tag,"balances: ",app.balances.length)
+        // log.info(tag,"nfts: ",app.nfts.length)
+        // log.info(tag,"context: ",app.context)
         // log.info(tag,"assetContext: ",app.assetContext)
         // log.info(tag,"blo: ",app.assetContext)
         // log.info(tag,"assetContext: ",app.assetContext)
@@ -93,13 +93,13 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultForget: ",resultForget.data)
         
         //get HDwallet
-        const { keystoreWallet } = await import('@pioneer-platform/keystore');
+        // const { keystoreWallet } = await import('@pioneer-platform/keystore');
         const { keepkeyWallet } = await import('@pioneer-platform/keepkey');
-        log.debug(tag,"walletKeepKey: ",keepkeyWallet)
+        log.info(tag,"walletKeepKey: ",keepkeyWallet)
         assert(keepkeyWallet)
 
-        log.debug(tag,"walletSoftware: ",keystoreWallet)
-        assert(keystoreWallet)
+        // log.debug(tag,"walletSoftware: ",keystoreWallet)
+        // assert(keystoreWallet)
 
         
         //get pubkeys
@@ -149,8 +149,8 @@ const test_service = async function (this: any) {
         //
         // //pair softwareclea
         // let contextKeepKey = await app.getContextStringForWallet(walletKeepKey)
-        // let successKeepKey = await app.pairWallet(walletKeepKey)
-        // log.info(tag,"successKeepKey: ",successKeepKey)
+        let successKeepKey = await app.pairWallet(keepkeyWallet)
+        log.info(tag,"successKeepKey: ",successKeepKey)
         // assert(successKeepKey)
         //
         // //get balances for keepkey

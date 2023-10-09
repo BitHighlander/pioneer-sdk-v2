@@ -6,7 +6,7 @@
     "packages": [
       "e2e/**/*",
       "intergration/**/*",
-      "modules/**/*"
+      "modules/*"
     ],
     "version": "independent"
   },
