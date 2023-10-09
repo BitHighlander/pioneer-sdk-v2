@@ -14,7 +14,7 @@ const TAG  = " | intergration-test | "
 
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
-let SDK = require('@pioneer-sdk/sdk')
+let SDK = require('@pioneer-sdk/sdk-v2')
 let wait = require('wait-promise');
 
 let sleep = wait.sleep;
@@ -29,7 +29,6 @@ let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 // let TRADE_PAIR  = "ETH_BTC"
 // let INPUT_ASSET = ASSET
 // let OUTPUT_ASSET = "BTC"
-
 
 //fake browser
 //@ts-ignore
@@ -96,6 +95,10 @@ const test_service = async function (this: any) {
         console.log(tag,' CHECKPOINT 3');
         let resultInit = await app.init()
         log.info(tag,"resultInit: ",resultInit)
+
+        log.info(tag,"wallets: ",app.wallets.length)
+
+
         // log.info(tag,"pubkeys: ",app.pubkeys)
         // log.info(tag,"balances: ",app.balances)
         // log.info(tag,"nfts: ",app.nfts)
@@ -115,10 +118,10 @@ const test_service = async function (this: any) {
         // log.info(tag,"resultForget: ",resultForget.data)
         
         //get HDwallet
-        // const { keystoreWallet } = await import('@pioneer-platform/keystore');
-        const { keepkeyWallet } = await import('@pioneer-platform/keepkey');
-        log.info(tag,"walletKeepKey: ",keepkeyWallet)
-        assert(keepkeyWallet)
+        // // const { keystoreWallet } = await import('@pioneer-platform/keystore');
+        // const { keepkeyWallet } = await import('@pioneer-platform/keepkey');
+        // log.info(tag,"walletKeepKey: ",keepkeyWallet)
+        // assert(keepkeyWallet)
 
         // log.debug(tag,"walletSoftware: ",keystoreWallet)
         // assert(keystoreWallet)
@@ -171,8 +174,10 @@ const test_service = async function (this: any) {
         //
         // //pair softwareclea
         // let contextKeepKey = await app.getContextStringForWallet(walletKeepKey)
-        let successKeepKey = await app.pairWallet(keepkeyWallet)
+
+        let successKeepKey = await app.pairWallet('KEEPKEY')
         log.info(tag,"successKeepKey: ",successKeepKey)
+
         // assert(successKeepKey)
         //
         // //get balances for keepkey

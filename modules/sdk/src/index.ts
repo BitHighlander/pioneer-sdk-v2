@@ -28,7 +28,8 @@ let {
     COIN_MAP_KEEPKEY_LONG,
     getRangoBlockchainName
 } = require('@pioneer-platform/pioneer-coins')
-
+import { initializeWallets } from "./connect";
+import { availableChainsByWallet } from "./support";
 // @ts-ignore
 import Pioneer from "@pioneer-platform/pioneer-client"
 
@@ -80,22 +81,12 @@ export class SDK {
                 this.pioneer = await PioneerClient.init()
                 if(!this.pioneer)throw Error("Fialed to init pioneer server!")
 
+                //init wallets
+                this.wallets = await initializeWallets()
+                log.info("wallets",this.wallets)
+
                 //init swapkit
                 this.swapKit = new SwapKitCore();
-
-                //done registering, now get the user
-                //this.refresh()
-                if(!this.pioneer) throw Error("Failed to init pioneer server!")
-                return this.pioneer
-            } catch (e) {
-                log.error(tag, "e: ", e)
-            }
-        }
-        this.pairWallet = async function (wallet:any) {
-            let tag = TAG + " | pairWallet | "
-            try {
-                log.debug(tag,"Pairing Wallet")
-                if(!wallet) throw Error("Must have wallet to pair!")
 
                 log.info(tag,"this.swapKit: ",this.swapKit)
                 let ethplorerApiKey = process.env.ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7'
@@ -103,7 +94,6 @@ export class SDK {
                 let utxoApiKey = process.env.BLOCKCHAIR_API_KEY || 'A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf'
                 let walletConnectProjectId = process.env.WALLET_CONNECT_PROJECT_ID || 'A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf'
                 let stagenet = false
-
                 await this.swapKit.extend({
                     config: {
                         ethplorerApiKey,
@@ -112,26 +102,33 @@ export class SDK {
                         walletConnectProjectId,
                         stagenet,
                     },
-                    wallets: [wallet],
+                    wallets: [this.wallets[0].wallet],
                 });
+                //done registering, now get the user
+                //this.refresh()
+                if(!this.pioneer) throw Error("Failed to init pioneer server!")
+                return this.pioneer
+            } catch (e) {
+                log.error(tag, "e: ", e)
+            }
+        }
+        this.pairWallet = async function (wallet:string) {
+            let tag = TAG + " | pairWallet | "
+            try {
+                log.debug(tag,"Pairing Wallet")
+                if(!wallet) throw Error("Must have wallet to pair!")
 
-                const AllChainsSupported = [
-                    Chain.Arbitrum,
-                    Chain.Avalanche,
-                    Chain.Binance,
-                    Chain.BinanceSmartChain,
-                    Chain.Bitcoin,
-                    Chain.BitcoinCash,
-                    Chain.Cosmos,
-                    Chain.Dogecoin,
-                    Chain.Ethereum,
-                    Chain.Litecoin,
-                    Chain.Optimism,
-                    Chain.Polygon,
-                    Chain.THORChain,
-                ] as Chain[];
+                //filter wallets by type
+                let walletSelected:any = this.wallets.filter((w:any) => w.type === wallet)
+                walletSelected = walletSelected[0]
+                log.info(tag,"walletSelected: ",walletSelected)
 
-                const resultKeepKey = await this.swapKit.connectKeepKey(AllChainsSupported);
+                //supported chains
+                let AllChainsSupported = availableChainsByWallet[walletSelected.type]
+                log.info(tag,"walletSelected.wallet.connectMethodName: ",walletSelected)
+                log.info(tag,"walletSelected.wallet.connectMethodName: ",walletSelected.wallet.connectMethodName)
+
+                const resultKeepKey = await this.swapKit[walletSelected.wallet.connectMethodName](AllChainsSupported);
                 console.log("resultKeepKey: ", resultKeepKey);
                 console.log("client: ", this.swapKit);
 

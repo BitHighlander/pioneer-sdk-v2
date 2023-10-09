@@ -20,7 +20,15 @@
     "clean": "rm -rf coverage src/**/*.js src/**/*.map lib node_modules"
   },
   "dependencies": {
+    "@keepkey/keepkey-sdk": "^0.2.52",
+    "@keplr-wallet/types": "^0.12.31",
+    "@pioneer-platform/evm-web3-wallets": "^3.0.1",
+    "@pioneer-platform/keepkey": "^3.0.1",
+    "@pioneer-platform/keplr": "^3.0.1",
+    "@pioneer-platform/ledger": "^3.0.1",
     "@pioneer-platform/loggerdog": "^8.1.27",
+    "@pioneer-platform/metamask": "^3.0.1",
+    "@pioneer-platform/okx": "^3.0.1",
     "@pioneer-platform/pioneer-client": "^9.0.18",
     "@pioneer-platform/pioneer-coins": "^8.1.72",
     "@pioneer-platform/pioneer-events": "^8.1.49",
@@ -29,7 +37,10 @@
     "@pioneer-platform/toolbox-cosmos": "^3.0.1",
     "@pioneer-platform/toolbox-evm": "^3.0.1",
     "@pioneer-platform/toolbox-utxo": "3.0.6",
+    "@pioneer-platform/trezor": "^3.0.1",
     "@pioneer-platform/types": "^3.0.1",
+    "@pioneer-platform/walletconnect": "^3.0.3",
+    "@pioneer-platform/xdefi": "^3.0.1",
     "onchange": "^7.1.0",
     "typescript": "^5.2.2"
   }
