@@ -32,27 +32,6 @@ let {
 // @ts-ignore
 import Pioneer from "@pioneer-platform/pioneer-client"
 
-//@ts-ignore
-if (typeof window === 'undefined') {
-    //@ts-ignore
-    global.window = {};
-}
-//@ts-ignore
-if (typeof localStorage === 'undefined') {
-    //@ts-ignore
-    global.localStorage = {
-        getItem: function (key:string) {
-            return this[key];
-        },
-        setItem: function (key:string, value:string) {
-            this[key] = value;
-        },
-        removeItem: function (key:string) {
-            delete this[key];
-        }
-    };
-}
-
 export class SDK {
     private status: string;
     private username: string;

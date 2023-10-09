@@ -31,6 +31,28 @@ let wss = process.env['URL_PIONEER_SOCKET'] || 'wss://pioneers.dev'
 // let OUTPUT_ASSET = "BTC"
 
 
+//fake browser
+//@ts-ignore
+if (typeof window === 'undefined') {
+    //@ts-ignore
+    global.window = {};
+}
+//@ts-ignore
+if (typeof localStorage === 'undefined') {
+    //@ts-ignore
+    global.localStorage = {
+        getItem: function (key:string) {
+            return this[key];
+        },
+        setItem: function (key:string, value:string) {
+            this[key] = value;
+        },
+        removeItem: function (key:string) {
+            delete this[key];
+        }
+    };
+}
+
 let noBroadcast = false
 
 console.log("spec: ",spec)
