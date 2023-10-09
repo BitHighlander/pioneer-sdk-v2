@@ -68,6 +68,13 @@ export class SDK {
     private swapKit: any;
     private pioneer: any;
     private pairWallet: (wallet: any) => Promise<any>;
+    // public startSocket: () => Promise<any>;
+    // public stopSocket: () => any;
+    // public sendToAddress: (tx:any) => Promise<any>;
+    // public swapQuote: (tx:any) => Promise<any>;
+    // public build: (tx:any) => Promise<any>;
+    // public sign: (tx:any, wallet:any) => Promise<any>;
+    // public broadcast: (tx:any) => Promise<any>;
     constructor(spec:string,config:any) {
         this.status = 'preInit'
         this.spec = config.spec || 'https://pioneers.dev/spec/swagger'
@@ -156,7 +163,6 @@ export class SDK {
                 log.error(tag, "e: ", JSON.stringify(e))
                 // log.error(tag, "e2: ", e.response)
                 // log.error(tag, "e3: ", e.response.data)
-
             }
         }
     }
