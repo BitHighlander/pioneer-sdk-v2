@@ -8,6 +8,8 @@ const TAG = " | Pioneer-sdk | "
 const log = require("@pioneer-platform/loggerdog")()
 import { Chain, EVMChainList, WalletOption } from "@pioneer-platform/types";
 import { SwapKitCore } from '@pioneer-platform/swapkit-core';
+let wait = require('wait-promise');
+let sleep = wait.sleep;
 let {
     blockchains,
     getPaths,
@@ -32,6 +34,8 @@ import { initializeWallets } from "./connect";
 import { availableChainsByWallet } from "./support";
 // @ts-ignore
 import Pioneer from "@pioneer-platform/pioneer-client"
+// @ts-ignore
+import {shortListNameToCaip,shortListSymbolToCaip,evmCaips} from "@pioneer-platform/pioneer-caip"
 
 export class SDK {
     private status: string;
@@ -55,6 +59,8 @@ export class SDK {
     // public build: (tx:any) => Promise<any>;
     // public sign: (tx:any, wallet:any) => Promise<any>;
     // public broadcast: (tx:any) => Promise<any>;
+    private balances: any[];
+    private nfts: any[];
     constructor(spec:string,config:any) {
         this.status = 'preInit'
         this.spec = config.spec || 'https://pioneers.dev/spec/swagger'
@@ -63,6 +69,8 @@ export class SDK {
         this.queryKey = config.queryKey // or generate?
         this.paths = [...config.paths, ...getPaths()];
         this.pubkeys = []
+        this.balances = []
+        this.nfts = []
         this.pioneer = null
         this.swapKit = null
         this.context = ""
@@ -82,19 +90,20 @@ export class SDK {
                 if(!this.pioneer)throw Error("Fialed to init pioneer server!")
 
                 //init wallets
-                this.wallets = await initializeWallets()
-                log.info("wallets",this.wallets)
+                let {wallets,walletsVerbose} = await initializeWallets()
+                this.wallets = walletsVerbose
+                // log.info("wallets",this.wallets)
 
                 //init swapkit
                 this.swapKit = new SwapKitCore();
 
-                log.info(tag,"this.swapKit: ",this.swapKit)
+                // log.info(tag,"this.swapKit: ",this.swapKit)
                 let ethplorerApiKey = process.env.ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7'
                 let covalentApiKey = process.env.COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q'
                 let utxoApiKey = process.env.BLOCKCHAIR_API_KEY || 'A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf'
-                let walletConnectProjectId = process.env.WALLET_CONNECT_PROJECT_ID || 'A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf'
+                let walletConnectProjectId = process.env.WALLET_CONNECT_PROJECT_ID || ''
                 let stagenet = false
-                await this.swapKit.extend({
+                let configKit = {
                     config: {
                         ethplorerApiKey,
                         covalentApiKey,
@@ -102,8 +111,10 @@ export class SDK {
                         walletConnectProjectId,
                         stagenet,
                     },
-                    wallets: [this.wallets[0].wallet],
-                });
+                    wallets,
+                }
+                log.info(tag,"configKit: ",configKit)
+                await this.swapKit.extend(configKit);
                 //done registering, now get the user
                 //this.refresh()
                 if(!this.pioneer) throw Error("Failed to init pioneer server!")
@@ -115,22 +126,121 @@ export class SDK {
         this.pairWallet = async function (wallet:string) {
             let tag = TAG + " | pairWallet | "
             try {
+                console.log("FAGGGOOOTTTSA")
                 log.debug(tag,"Pairing Wallet")
                 if(!wallet) throw Error("Must have wallet to pair!")
 
                 //filter wallets by type
                 let walletSelected:any = this.wallets.filter((w:any) => w.type === wallet)
                 walletSelected = walletSelected[0]
-                log.info(tag,"walletSelected: ",walletSelected)
+                // log.info(tag,"walletSelected: ",walletSelected)
 
                 //supported chains
                 let AllChainsSupported = availableChainsByWallet[walletSelected.type]
-                log.info(tag,"walletSelected.wallet.connectMethodName: ",walletSelected)
-                log.info(tag,"walletSelected.wallet.connectMethodName: ",walletSelected.wallet.connectMethodName)
+                // log.info(tag,"walletSelected.wallet.connectMethodName: ",walletSelected)
+                // log.info(tag,"walletSelected.wallet.connectMethodName: ",walletSelected.wallet.connectMethodName)
+                log.info("AllChainsSupported: ", AllChainsSupported);
+                const resultPair = await this.swapKit[walletSelected.wallet.connectMethodName](AllChainsSupported);
+                log.info("resultPair: ", resultPair);
+                log.info("this.swapKit: ", this.swapKit);
+                //get balances
 
-                const resultKeepKey = await this.swapKit[walletSelected.wallet.connectMethodName](AllChainsSupported);
-                console.log("resultKeepKey: ", resultKeepKey);
-                console.log("client: ", this.swapKit);
+                const chains = Object.keys(this.swapKit.connectedWallets);
+
+                //calculate walletDaa
+                const walletDataArray = await Promise.all(
+                    // @ts-ignore
+                    chains.map(this.swapKit.getWalletByChain)
+                );
+                log.info("walletDataArray: ", walletDataArray);
+                console.log("walletDataArray: ", walletDataArray)
+                // @ts-ignore
+                //balances
+
+                // for(let i = 0; i < chains.length; i++){
+                //     let chain = chains[i]
+                //     try{
+                //         let walletInfo = await this.swapKit.getWalletByChain(chain)
+                //         // let walletInfo = await this.swapKit.getBalance(chain)
+                //         console.log("walletInfo: ",walletInfo)
+                //     }catch(e){
+                //         log.error("Failed to get chain: ",chain)
+                //         log.error("E:",e)
+                //     }
+                // }
+
+                //
+
+
+                // await sleep(1000)
+                // log.info("resultPair: ", this.swapKit);
+                //
+                // let ethAddress = await this.swapKit.getAddress('ETH')
+                // if(!ethAddress) throw Error("Failed to get eth address! can not pair wallet")
+                // let context = wallet.toLowerCase() + ":" + ethAddress+".wallet"
+                // log.info(tag,"context: ",context)
+                // //get all pubkeys
+                // let pubkeys = []
+                // for(let i = 0; i < AllChainsSupported.length; i++){
+                //     let chain = AllChainsSupported[i]
+                //     log.info(tag,"chain: ",chain)
+                //     try{
+                //         let address = await this.swapKit.getAddress(chain)
+                //         log.info(tag,"address: ",address)
+                //         let pubkey = {
+                //             context,
+                //             wallet:walletSelected.type,
+                //             symbol:chain,
+                //             network:chain,
+                //             blockchain:COIN_MAP_LONG[chain] || 'unknown',
+                //             type:'address',
+                //             script_type:'unknown',
+                //             path:'unknown',
+                //             addressNList:'unknown',
+                //             networkCaip:shortListSymbolToCaip[chain],
+                //             master:address,
+                //             pubkey:address,
+                //             address,
+                //         }
+                //         //exclude eip:155
+                //         if(chain === 'ARB' || chain === 'AVAX' || chain === 'MATIC' || chain === 'OP' || chain === 'BSC'){
+                //             //redundant pubkeys
+                //         }else{
+                //             pubkeys.push(pubkey)
+                //             log.info(tag,"pubkey: ",pubkey)
+                //         }
+                //     }catch(e){
+                //         log.error("failed on chain: ",chain)
+                //         log.error("e: ",e)
+                //     }
+                // }
+                // //build pubkeys
+                // log.info(tag,"pubkeys: ",pubkeys)
+                // let register = {
+                //     username:this.username,
+                //     blockchains:AllChainsSupported,
+                //     context,
+                //     publicAddress:ethAddress,
+                //     walletDescription:{
+                //         context,
+                //         type:wallet
+                //     },
+                //     data:{
+                //         pubkeys
+                //     },
+                //     queryKey:this.queryKey,
+                //     auth:'lol',
+                //     provider:'lol'
+                // }
+                // log.info(tag,"register payload: ",register)
+                // log.info(tag,"register payload: ",JSON.stringify(register))
+                // let result = await this.pioneer.Register(register)
+                // log.info(tag,"result: ",result.data)
+                // //register with pioneer
+                // //@ts-ignore
+                // if(result.data.balances)this.balances = result.data.balances
+                // //@ts-ignore
+                // if(result.data.nfts)this.nfts = result.data.nfts
 
                 return true
             } catch (e) {

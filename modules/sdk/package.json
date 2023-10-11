@@ -1,6 +1,6 @@
 {
   "name": "@pioneer-sdk/sdk-v2",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -25,10 +25,12 @@
     "@pioneer-platform/evm-web3-wallets": "^3.0.1",
     "@pioneer-platform/keepkey": "^3.0.1",
     "@pioneer-platform/keplr": "^3.0.1",
+    "@pioneer-platform/keystore": "^3.0.1",
     "@pioneer-platform/ledger": "^3.0.1",
     "@pioneer-platform/loggerdog": "^8.1.27",
     "@pioneer-platform/metamask": "^3.0.1",
     "@pioneer-platform/okx": "^3.0.1",
+    "@pioneer-platform/pioneer-caip": "^8.1.79",
     "@pioneer-platform/pioneer-client": "^9.0.18",
     "@pioneer-platform/pioneer-coins": "^8.1.72",
     "@pioneer-platform/pioneer-events": "^8.1.49",

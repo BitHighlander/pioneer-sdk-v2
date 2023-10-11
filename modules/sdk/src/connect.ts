@@ -4,6 +4,7 @@ import { Chain, EVMChainList, WalletOption } from '@pioneer-platform/types';
 export async function initializeWallets() {
     let tag = TAG + " | initializeWallets | "
     const wallets:any = [];
+    const walletsVerbose:any = [];
 
     // Importing wallets
     const { keepkeyWallet } = await import('@pioneer-platform/keepkey');
@@ -19,7 +20,6 @@ export async function initializeWallets() {
     log.info("walletKeepKey: ", keepkeyWallet);
 
     // Initialize and push each wallet into the wallets array
-
     let walletKeepKey = {
         type: WalletOption.KEEPKEY,
         icon: 'https://pioneers.dev/coins/keepkey.png',
@@ -27,7 +27,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletKeepKey)
+    wallets.push(keepkeyWallet)
+    walletsVerbose.push(walletKeepKey)
     let walletMetaMask = {
         type: WalletOption.METAMASK,
         icon: 'https://pioneers.dev/coins/metamask.png',
@@ -35,7 +36,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletMetaMask)
+    wallets.push(metamaskWallet)
+    walletsVerbose.push(walletMetaMask)
     let walletEVM = {
         type:  'EVM',
         icon: 'https://pioneers.dev/coins/evm.png',
@@ -43,7 +45,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletEVM)
+    wallets.push(evmWallet)
+    walletsVerbose.push(walletEVM)
     let walletKeplr = {
         type:  WalletOption.KEPLR,
         icon: 'https://pioneers.dev/coins/keplr.png',
@@ -51,7 +54,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletKeplr)
+    wallets.push(keplrWallet)
+    walletsVerbose.push(walletKeplr)
     let walletKeystore = {
         type:  WalletOption.KEYSTORE,
         icon: 'https://pioneers.dev/coins/keystore.png',
@@ -59,8 +63,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletKeystore)
-
+    wallets.push(keystoreWallet)
+    walletsVerbose.push(walletKeystore)
     let walletLedger = {
         type:  WalletOption.LEDGER,
         icon: 'https://pioneers.dev/coins/ledger.png',
@@ -68,8 +72,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletLedger)
-
+    wallets.push(ledgerWallet)
+    walletsVerbose.push(walletLedger)
     let walletOKX = {
         type:  WalletOption.OKX,
         icon: 'https://pioneers.dev/coins/okx.png',
@@ -77,8 +81,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletOKX)
-
+    wallets.push(okxWallet)
+    walletsVerbose.push(walletOKX)
     let walletTrezor = {
         type:  WalletOption.TREZOR,
         icon: 'https://pioneers.dev/coins/trezor.png',
@@ -86,8 +90,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletTrezor)
-
+    wallets.push(trezorWallet)
+    walletsVerbose.push(walletTrezor)
     let walletWalletConnect = {
         type:  WalletOption.WALLETCONNECT,
         icon: 'https://pioneers.dev/coins/walletconnect.png',
@@ -95,8 +99,8 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletWalletConnect)
-
+    wallets.push(walletconnectWallet)
+    walletsVerbose.push(walletWalletConnect)
     let walletXDefi = {
         type:  WalletOption.XDEFI,
         icon: 'https://pioneers.dev/coins/xdefi.png',
@@ -104,10 +108,10 @@ export async function initializeWallets() {
         status: 'offline',
         isConnected: false
     }
-    wallets.push(walletXDefi)
-
+    wallets.push(xdefiWallet)
+    walletsVerbose.push(walletXDefi)
 
     //TODO test each for detection
 
-    return wallets;
+    return {wallets,walletsVerbose};
 }

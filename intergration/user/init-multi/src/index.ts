@@ -11,7 +11,9 @@ require("dotenv").config({path:'../../../../.env'})
 
 const TAG  = " | intergration-test | "
 
-
+console.log(process.env['BLOCKCHAIR_API_KEY'])
+if(!process.env['BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
+if(!process.env['BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@pioneer-sdk/sdk-v2')
@@ -41,9 +43,17 @@ if (typeof localStorage === 'undefined') {
     //@ts-ignore
     global.localStorage = {
         getItem: function (key:string) {
-            return this[key];
+            console.log("key: ",key)
+            if(key == 'apiKey'){
+                return 'f3b55816-efc4-47aa-af3b-284986a3106f';
+            } else {
+                return null;
+            }
+            // return null
         },
         setItem: function (key:string, value:string) {
+            console.log("key: ",key)
+            console.log("value: ",value)
             this[key] = value;
         },
         removeItem: function (key:string) {
@@ -94,7 +104,7 @@ const test_service = async function (this: any) {
         log.debug(tag,"app: ",app)
         console.log(tag,' CHECKPOINT 3');
         let resultInit = await app.init()
-        log.info(tag,"resultInit: ",resultInit)
+        //log.info(tag,"resultInit: ",resultInit)
 
         log.info(tag,"wallets: ",app.wallets.length)
 

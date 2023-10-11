@@ -11,9 +11,6 @@ env_*
 */*/lib
 */lib
 secrets/*
-*wallet*
-wallet*
-Wallet*
 monerowallet
 monerowallet.keys
 .deploy-env
