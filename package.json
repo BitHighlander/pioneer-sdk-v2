@@ -1,5 +1,5 @@
 {
-  "name": "pioneer-sdk-v2",
+  "name": "pioneer-sdk",
   "version": "0.0.1",
   "private": true,
   "workspaces": {

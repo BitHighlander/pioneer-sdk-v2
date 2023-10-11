@@ -10,7 +10,7 @@
     }
   },
   "packages": [
-    "apps/*",
+    "apps/**/*",
     "modules/**/*",
     "e2e/**/*"
   ],
