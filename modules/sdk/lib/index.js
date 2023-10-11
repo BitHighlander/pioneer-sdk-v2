@@ -11,6 +11,7 @@ exports.SDK = void 0;
 
  */
 const TAG = " | Pioneer-sdk | ";
+// @ts-ignore
 const loggerdog_1 = __importDefault(require("@pioneer-platform/loggerdog"));
 const log = (0, loggerdog_1.default)();
 const swapkit_core_1 = require("@pioneer-platform/swapkit-core");
@@ -19,6 +20,8 @@ const connect_1 = require("./connect");
 const support_1 = require("./support");
 // @ts-ignore
 const pioneer_client_1 = __importDefault(require("@pioneer-platform/pioneer-client"));
+// @ts-ignore
+const pioneer_caip_1 = require("@pioneer-platform/pioneer-caip");
 class SDK {
     constructor(spec, config) {
         this.status = 'preInit';
@@ -33,8 +36,8 @@ class SDK {
         this.pioneer = null;
         this.swapKit = null;
         this.context = "";
-        this.assetContext = {};
-        this.blockchainContext = {};
+        this.assetContext = null;
+        this.blockchainContext = null;
         this.wallets = [];
         // @ts-ignore
         this.init = async function () {
@@ -57,10 +60,10 @@ class SDK {
                 //init swapkit
                 this.swapKit = new swapkit_core_1.SwapKitCore();
                 // log.info(tag,"this.swapKit: ",this.swapKit)
-                let ethplorerApiKey = process.env.ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7';
-                let covalentApiKey = process.env.COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q';
-                let utxoApiKey = process.env.BLOCKCHAIR_API_KEY || 'A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf';
-                let walletConnectProjectId = process.env.WALLET_CONNECT_PROJECT_ID || '';
+                let ethplorerApiKey = process.env.VITE_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7';
+                let covalentApiKey = process.env.VITE_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q';
+                let utxoApiKey = process.env.VITE_BLOCKCHAIR_API_KEY || 'A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf';
+                let walletConnectProjectId = process.env.VITE_WALLET_CONNECT_PROJECT_ID || '';
                 let stagenet = false;
                 let configKit = {
                     config: {
@@ -87,7 +90,6 @@ class SDK {
         this.pairWallet = async function (wallet) {
             let tag = TAG + " | pairWallet | ";
             try {
-                console.log("FAGGGOOOTTTSA");
                 log.debug(tag, "Pairing Wallet");
                 if (!wallet)
                     throw Error("Must have wallet to pair!");
@@ -103,97 +105,66 @@ class SDK {
                 const resultPair = await this.swapKit[walletSelected.wallet.connectMethodName](AllChainsSupported);
                 log.info("resultPair: ", resultPair);
                 log.info("this.swapKit: ", this.swapKit);
-                //get balances
-                const chains = Object.keys(this.swapKit.connectedWallets);
-                //calculate walletDaa
-                const walletDataArray = await Promise.all(
-                // @ts-ignore
-                chains.map(this.swapKit.getWalletByChain));
-                log.info("walletDataArray: ", walletDataArray);
-                console.log("walletDataArray: ", walletDataArray);
-                // @ts-ignore
-                //balances
-                // for(let i = 0; i < chains.length; i++){
-                //     let chain = chains[i]
-                //     try{
-                //         let walletInfo = await this.swapKit.getWalletByChain(chain)
-                //         // let walletInfo = await this.swapKit.getBalance(chain)
-                //         console.log("walletInfo: ",walletInfo)
-                //     }catch(e){
-                //         log.error("Failed to get chain: ",chain)
-                //         log.error("E:",e)
-                //     }
-                // }
-                //
-                // await sleep(1000)
-                // log.info("resultPair: ", this.swapKit);
-                //
-                // let ethAddress = await this.swapKit.getAddress('ETH')
-                // if(!ethAddress) throw Error("Failed to get eth address! can not pair wallet")
-                // let context = wallet.toLowerCase() + ":" + ethAddress+".wallet"
-                // log.info(tag,"context: ",context)
-                // //get all pubkeys
-                // let pubkeys = []
-                // for(let i = 0; i < AllChainsSupported.length; i++){
-                //     let chain = AllChainsSupported[i]
-                //     log.info(tag,"chain: ",chain)
-                //     try{
-                //         let address = await this.swapKit.getAddress(chain)
-                //         log.info(tag,"address: ",address)
-                //         let pubkey = {
-                //             context,
-                //             wallet:walletSelected.type,
-                //             symbol:chain,
-                //             network:chain,
-                //             blockchain:COIN_MAP_LONG[chain] || 'unknown',
-                //             type:'address',
-                //             script_type:'unknown',
-                //             path:'unknown',
-                //             addressNList:'unknown',
-                //             networkCaip:shortListSymbolToCaip[chain],
-                //             master:address,
-                //             pubkey:address,
-                //             address,
-                //         }
-                //         //exclude eip:155
-                //         if(chain === 'ARB' || chain === 'AVAX' || chain === 'MATIC' || chain === 'OP' || chain === 'BSC'){
-                //             //redundant pubkeys
-                //         }else{
-                //             pubkeys.push(pubkey)
-                //             log.info(tag,"pubkey: ",pubkey)
-                //         }
-                //     }catch(e){
-                //         log.error("failed on chain: ",chain)
-                //         log.error("e: ",e)
-                //     }
-                // }
-                // //build pubkeys
-                // log.info(tag,"pubkeys: ",pubkeys)
-                // let register = {
-                //     username:this.username,
-                //     blockchains:AllChainsSupported,
-                //     context,
-                //     publicAddress:ethAddress,
-                //     walletDescription:{
-                //         context,
-                //         type:wallet
-                //     },
-                //     data:{
-                //         pubkeys
-                //     },
-                //     queryKey:this.queryKey,
-                //     auth:'lol',
-                //     provider:'lol'
-                // }
-                // log.info(tag,"register payload: ",register)
-                // log.info(tag,"register payload: ",JSON.stringify(register))
-                // let result = await this.pioneer.Register(register)
-                // log.info(tag,"result: ",result.data)
-                // //register with pioneer
-                // //@ts-ignore
-                // if(result.data.balances)this.balances = result.data.balances
-                // //@ts-ignore
-                // if(result.data.nfts)this.nfts = result.data.nfts
+                if (resultPair) {
+                    //update
+                    let matchingWalletIndex = this.wallets.findIndex((w) => w.type === wallet);
+                    log.info(tag, "matchingWalletIndex: ", matchingWalletIndex);
+                    //get balances
+                    let ethAddress = await this.swapKit.getAddress('ETH');
+                    if (!ethAddress)
+                        throw Error("Failed to get eth address! can not pair wallet");
+                    let context = wallet.toLowerCase() + ":" + ethAddress + ".wallet";
+                    log.info(tag, "context: ", context);
+                    //add context to wallet
+                    this.wallets[matchingWalletIndex].context = context;
+                    this.wallets[matchingWalletIndex].connected = true;
+                    this.wallets[matchingWalletIndex].status = 'connected';
+                    this.setContext(context);
+                    //get all pubkeys
+                    let pubkeys = [];
+                    for (let i = 0; i < AllChainsSupported.length; i++) {
+                        let chain = AllChainsSupported[i];
+                        log.info(tag, "chain: ", chain);
+                        try {
+                            let walletInfo = await this.swapKit.getWalletByChain(chain);
+                            log.info(tag, "walletInfo: ", walletInfo);
+                            let address = walletInfo.address;
+                            log.info(tag, "address: ", address);
+                            let pubkey = {
+                                context,
+                                wallet: walletSelected.type,
+                                symbol: chain,
+                                network: chain,
+                                blockchain: pioneer_coins_1.COIN_MAP_LONG[chain] || 'unknown',
+                                type: 'address',
+                                script_type: 'unknown',
+                                path: 'unknown',
+                                addressNList: 'unknown',
+                                networkCaip: pioneer_caip_1.shortListSymbolToCaip[chain],
+                                master: address,
+                                pubkey: address,
+                                address,
+                            };
+                            //exclude eip:155
+                            if (chain === 'ARB' || chain === 'AVAX' || chain === 'MATIC' || chain === 'OP' || chain === 'BSC') {
+                                //redundant pubkeys
+                            }
+                            else {
+                                pubkeys.push(pubkey);
+                                log.info(tag, "pubkey: ", pubkey);
+                            }
+                            //get balance
+                            this.balances.push(walletInfo.balance);
+                        }
+                        catch (e) {
+                            log.error("failed on chain: ", chain);
+                            log.error("e: ", e);
+                        }
+                    }
+                }
+                else {
+                    throw Error("Failed to pair wallet! " + walletSelected.type);
+                }
                 return true;
             }
             catch (e) {
@@ -202,6 +173,59 @@ class SDK {
                 log.error(tag, "e: ", JSON.stringify(e));
                 // log.error(tag, "e2: ", e.response)
                 // log.error(tag, "e3: ", e.response.data)
+            }
+        };
+        this.setContext = async function (context) {
+            let tag = TAG + " | setContext | ";
+            try {
+                log.info(tag, "context: ", context);
+                const isContextExist = this.wallets.some((wallet) => wallet.context === context);
+                log.info(tag, "isContextExist: ", isContextExist);
+                if (isContextExist) {
+                    //if success
+                    this.context = context;
+                    // let result = await this.pioneer.SetContext({context})
+                    // log.debug(tag,"result: ",result)
+                    if (!this.blockchainContext) {
+                        //set to ETH (default)
+                        this.blockchainContext = pioneer_caip_1.primaryBlockchains['eip155:1/slip44:60'];
+                    }
+                    if (!this.assetContext) {
+                        this.assetContext = pioneer_caip_1.primaryAssets['eip155:1/slip44:60'];
+                    }
+                    //if no output set to BTC IF wallet supports it, if not USDC (TODO set to PRO token)
+                    //pubkey pubkey context
+                    let blockchain = this.blockchainContext;
+                    //get pubkey for blockchain
+                    log.debug(tag, "this.pubkeys: ", this.pubkeys);
+                    log.debug(tag, "blockchainContext: ", blockchain);
+                    log.debug(tag, "blockchain: ", blockchain.name);
+                    log.debug(tag, "context: ", context);
+                    let pubkeysForContext = this.pubkeys.filter((item) => item.context === context);
+                    log.debug(tag, "pubkeysForContext: ", pubkeysForContext);
+                    // let pubkey = pubkeysForContext.find(
+                    //     (item: { blockchain: any; context: string }) => item.blockchain === blockchain.name && item.context === context
+                    // );
+                    // log.debug(tag, "pubkey: ", pubkey);
+                    //
+                    // if(pubkey) {
+                    //     this.pubkeyContext = pubkey
+                    //     log.debug(tag,"pubkeyContext: ",this.pubkeyContext)
+                    // } else {
+                    //     log.debug(tag,"pubkeys: ",this.pubkeys)
+                    //     log.debug(tag,"pubkeysForContext: ",pubkeysForContext)
+                    //
+                    //     throw Error("unable to find ("+blockchain.name+") pubkey for context! "+context)
+                    // }
+                    return { success: true };
+                }
+                else {
+                    throw Error("Wallet context not found paired! con not set context to unpaired wallet!" + context);
+                }
+            }
+            catch (e) {
+                log.error(tag, e);
+                throw e;
             }
         };
     }

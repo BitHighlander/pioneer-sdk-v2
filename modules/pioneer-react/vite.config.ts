@@ -16,6 +16,7 @@ export default defineConfig(({}) => {
   return {
     // vite config
     define: {
+      'process.env.VITE_BLOCKCHAIR_API_KEY': JSON.stringify(process.env.VITE_BLOCKCHAIR_API_KEY),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     },
     plugins: [react()],

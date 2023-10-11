@@ -32,9 +32,7 @@ import {
 
 import { v4 as uuidv4 } from "uuid";
 
-
 const eventEmitter = new EventEmitter();
-
 
 export enum WalletActions {
   SET_STATUS = "SET_STATUS",
@@ -161,8 +159,8 @@ export const PioneerProvider = ({
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const showModal = (message:string) => {
-    console.log("OPEN MODAL: modal: ", message)
+  const showModal = (message: string) => {
+    console.log("OPEN MODAL: modal: ", message);
     setIsModalOpen(true);
     // Optional: You can also set a message to be displayed in the modal
   };
@@ -175,9 +173,16 @@ export const PioneerProvider = ({
   const connectWallet = async function (wallet: string) {
     try {
       console.log("connectWallet: ", wallet);
-      let successKeepKey = await state.app.pairWallet('KEEPKEY')
+      const successKeepKey = await state.app.pairWallet(wallet);
       console.log("successKeepKey: ", successKeepKey);
-
+      console.log("state.app.assetContext: ", state.app.assetContext);
+      console.log("state.app.blockchainContext: ", state.app.blockchainContext);
+      console.log("state.app.context: ", state.app.context);
+      if(state && state.app){
+        dispatch({ type: WalletActions.SET_CONTEXT, payload: state.app.context });
+        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: state.app.assetContext });
+        dispatch({ type: WalletActions.SET_BLOCKCHAIN_CONTEXT, payload: state.app.blockchainContext });
+      }
     } catch (e) {
       console.error(e);
     }
@@ -190,6 +195,11 @@ export const PioneerProvider = ({
       let username: string | null = localStorage.getItem("username");
       //@ts-ignore
       dispatch({ type: WalletActions.SET_USERNAME, payload: username });
+
+
+      //TODO why dis no worky
+      //if keepkey available, connect
+      connectWallet("KEEPKEY");
 
       //if auto connecting
       const isOnboarded = localStorage.getItem("userOnboarded");
@@ -219,8 +229,8 @@ export const PioneerProvider = ({
       const paths: any = [];
       console.log("VITE_PIONEER_URL_SPEC: ");
       const spec =
-          //@ts-ignore
-          "https://pioneers.dev/spec/swagger.json";
+        //@ts-ignore
+        "https://pioneers.dev/spec/swagger.json";
       //@ts-ignore
       console.log("spec: ", spec);
       const wss = "wss://pioneers.dev";
@@ -235,14 +245,17 @@ export const PioneerProvider = ({
       const appInit = new SDK(spec, configPioneer);
       // @ts-ignore
       const api = await appInit.init();
-      
+
       //set wallets to available wallets
       // @ts-ignore
-      console.log("appInit.wallets: ",appInit.wallets);
+      console.log("appInit.wallets: ", appInit.wallets);
       // @ts-ignore
       dispatch({ type: WalletActions.SET_API, payload: api });
       // @ts-ignore
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
+
+
+      //@TODO if any wallet been connected before connect
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
@@ -251,12 +264,23 @@ export const PioneerProvider = ({
 
   // onstart get data
   useEffect(() => {
-    showModal('foo');
+    showModal("foo");
     onStart();
   }, []);
 
+  useEffect(() => {
+    if(state && state.app){
+      dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: state.app.assetContext });
+      dispatch({ type: WalletActions.SET_BLOCKCHAIN_CONTEXT, payload: state.app.blockchainContext });
+      dispatch({ type: WalletActions.SET_CONTEXT, payload: state.app.context });
+    }
+  }, [state?.app, state?.app?.context, state?.app?.assetContext, state?.app?.blockchainContext]);
+
   // end
-  const value: any = useMemo(() => ({ state, dispatch, connectWallet }), [state]);
+  const value: any = useMemo(
+    () => ({ state, dispatch, connectWallet }),
+    [state]
+  );
 
   return (
     <PioneerContext.Provider value={value}>{children}</PioneerContext.Provider>

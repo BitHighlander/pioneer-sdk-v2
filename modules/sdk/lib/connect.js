@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeWallets = void 0;
 const TAG = " | connectWallets | ";
 const types_1 = require("@pioneer-platform/types");
+const support_1 = require("./support");
 async function initializeWallets() {
     let tag = TAG + " | initializeWallets | ";
     const wallets = [];
@@ -45,6 +46,7 @@ async function initializeWallets() {
     let walletKeepKey = {
         type: types_1.WalletOption.KEEPKEY,
         icon: 'https://pioneers.dev/coins/keepkey.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.KEEPKEY],
         wallet: keepkeyWallet,
         status: 'offline',
         isConnected: false
@@ -54,6 +56,7 @@ async function initializeWallets() {
     let walletMetaMask = {
         type: types_1.WalletOption.METAMASK,
         icon: 'https://pioneers.dev/coins/metamask.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.METAMASK],
         wallet: metamaskWallet,
         status: 'offline',
         isConnected: false
@@ -63,6 +66,7 @@ async function initializeWallets() {
     let walletEVM = {
         type: 'EVM',
         icon: 'https://pioneers.dev/coins/evm.png',
+        chains: support_1.availableChainsByWallet['EVM'],
         wallet: evmWallet,
         status: 'offline',
         isConnected: false
@@ -72,6 +76,7 @@ async function initializeWallets() {
     let walletKeplr = {
         type: types_1.WalletOption.KEPLR,
         icon: 'https://pioneers.dev/coins/keplr.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.KEPLR],
         wallet: keplrWallet,
         status: 'offline',
         isConnected: false
@@ -81,6 +86,7 @@ async function initializeWallets() {
     let walletKeystore = {
         type: types_1.WalletOption.KEYSTORE,
         icon: 'https://pioneers.dev/coins/keystore.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.KEYSTORE],
         wallet: keystoreWallet,
         status: 'offline',
         isConnected: false
@@ -90,6 +96,7 @@ async function initializeWallets() {
     let walletLedger = {
         type: types_1.WalletOption.LEDGER,
         icon: 'https://pioneers.dev/coins/ledger.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.LEDGER],
         wallet: ledgerWallet,
         status: 'offline',
         isConnected: false
@@ -99,6 +106,7 @@ async function initializeWallets() {
     let walletOKX = {
         type: types_1.WalletOption.OKX,
         icon: 'https://pioneers.dev/coins/okx.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.OKX],
         wallet: okxWallet,
         status: 'offline',
         isConnected: false
@@ -108,6 +116,7 @@ async function initializeWallets() {
     let walletTrezor = {
         type: types_1.WalletOption.TREZOR,
         icon: 'https://pioneers.dev/coins/trezor.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.TREZOR],
         wallet: trezorWallet,
         status: 'offline',
         isConnected: false
@@ -117,6 +126,7 @@ async function initializeWallets() {
     let walletWalletConnect = {
         type: types_1.WalletOption.WALLETCONNECT,
         icon: 'https://pioneers.dev/coins/walletconnect.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.WALLETCONNECT],
         wallet: walletconnectWallet,
         status: 'offline',
         isConnected: false
@@ -126,6 +136,7 @@ async function initializeWallets() {
     let walletXDefi = {
         type: types_1.WalletOption.XDEFI,
         icon: 'https://pioneers.dev/coins/xdefi.png',
+        chains: support_1.availableChainsByWallet[types_1.WalletOption.XDEFI],
         wallet: xdefiWallet,
         status: 'offline',
         isConnected: false

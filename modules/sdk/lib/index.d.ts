@@ -4,17 +4,19 @@ export declare class SDK {
     private queryKey;
     private wss;
     private spec;
-    private paths;
-    private pubkeys;
     private context;
     private assetContext;
     private blockchainContext;
-    private wallets;
+    private pubkeyContext;
     private swapKit;
     private pioneer;
-    private pairWallet;
+    private paths;
+    private pubkeys;
+    private wallets;
     private balances;
     private nfts;
+    private pairWallet;
+    private setContext;
     constructor(spec: string, config: any);
 }
 export default SDK;
