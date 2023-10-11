@@ -1,5 +1,4 @@
 const TAG = " | connectWallets | "
-const log = require("@pioneer-platform/loggerdog")()
 import { Chain, EVMChainList, WalletOption } from '@pioneer-platform/types';
 export async function initializeWallets() {
     let tag = TAG + " | initializeWallets | "
@@ -17,7 +16,6 @@ export async function initializeWallets() {
     const { trezorWallet } = await import('@pioneer-platform/trezor');
     const { walletconnectWallet } = await import('@pioneer-platform/walletconnect');
     const { xdefiWallet } = await import('@pioneer-platform/xdefi');
-    log.info("walletKeepKey: ", keepkeyWallet);
 
     // Initialize and push each wallet into the wallets array
     let walletKeepKey = {

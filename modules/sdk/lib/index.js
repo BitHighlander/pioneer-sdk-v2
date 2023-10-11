@@ -11,11 +11,10 @@ exports.SDK = void 0;
 
  */
 const TAG = " | Pioneer-sdk | ";
-const log = require("@pioneer-platform/loggerdog")();
+const loggerdog_1 = __importDefault(require("@pioneer-platform/loggerdog"));
+const log = (0, loggerdog_1.default)();
 const swapkit_core_1 = require("@pioneer-platform/swapkit-core");
-let wait = require('wait-promise');
-let sleep = wait.sleep;
-let { blockchains, getPaths, getPrecision, getExplorerUrl, getExplorerAddressUrl, getExplorerTxUrl, baseAmountToNative, nativeToBaseAmount, getNativeAssetForBlockchain, assetToBase, assetAmount, getSwapProtocals, xpubConvert, addressNListToBIP32, COIN_MAP, COIN_MAP_LONG, COIN_MAP_KEEPKEY_LONG, getRangoBlockchainName } = require('@pioneer-platform/pioneer-coins');
+const pioneer_coins_1 = require("@pioneer-platform/pioneer-coins");
 const connect_1 = require("./connect");
 const support_1 = require("./support");
 // @ts-ignore
@@ -27,7 +26,7 @@ class SDK {
         this.wss = config.wss || 'wss://pioneers.dev';
         this.username = config.username; // or generate?
         this.queryKey = config.queryKey; // or generate?
-        this.paths = [...config.paths, ...getPaths()];
+        this.paths = [...config.paths, ...(0, pioneer_coins_1.getPaths)()];
         this.pubkeys = [];
         this.balances = [];
         this.nfts = [];

@@ -25,7 +25,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeWallets = void 0;
 const TAG = " | connectWallets | ";
-const log = require("@pioneer-platform/loggerdog")();
 const types_1 = require("@pioneer-platform/types");
 async function initializeWallets() {
     let tag = TAG + " | initializeWallets | ";
@@ -42,7 +41,6 @@ async function initializeWallets() {
     const { trezorWallet } = await Promise.resolve().then(() => __importStar(require('@pioneer-platform/trezor')));
     const { walletconnectWallet } = await Promise.resolve().then(() => __importStar(require('@pioneer-platform/walletconnect')));
     const { xdefiWallet } = await Promise.resolve().then(() => __importStar(require('@pioneer-platform/xdefi')));
-    log.info("walletKeepKey: ", keepkeyWallet);
     // Initialize and push each wallet into the wallets array
     let walletKeepKey = {
         type: types_1.WalletOption.KEEPKEY,

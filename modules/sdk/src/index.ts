@@ -5,12 +5,11 @@
 
  */
 const TAG = " | Pioneer-sdk | "
-const log = require("@pioneer-platform/loggerdog")()
+import loggerdog from "@pioneer-platform/loggerdog";
+const log = loggerdog();
 import { Chain, EVMChainList, WalletOption } from "@pioneer-platform/types";
 import { SwapKitCore } from '@pioneer-platform/swapkit-core';
-let wait = require('wait-promise');
-let sleep = wait.sleep;
-let {
+import {
     blockchains,
     getPaths,
     getPrecision,
@@ -22,14 +21,14 @@ let {
     getNativeAssetForBlockchain,
     assetToBase,
     assetAmount,
-    getSwapProtocals,
+    getSwapProtocols,
     xpubConvert,
     addressNListToBIP32,
     COIN_MAP,
     COIN_MAP_LONG,
     COIN_MAP_KEEPKEY_LONG,
     getRangoBlockchainName
-} = require('@pioneer-platform/pioneer-coins')
+} from '@pioneer-platform/pioneer-coins';
 import { initializeWallets } from "./connect";
 import { availableChainsByWallet } from "./support";
 // @ts-ignore
