@@ -182,6 +182,7 @@ export const PioneerProvider = ({
         dispatch({ type: WalletActions.SET_CONTEXT, payload: state.app.context });
         dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: state.app.assetContext });
         dispatch({ type: WalletActions.SET_BLOCKCHAIN_CONTEXT, payload: state.app.blockchainContext });
+        dispatch({ type: WalletActions.SET_PUBKEY_CONTEXT, payload: state.app.pubkeyContext });
       }
     } catch (e) {
       console.error(e);
@@ -195,11 +196,6 @@ export const PioneerProvider = ({
       let username: string | null = localStorage.getItem("username");
       //@ts-ignore
       dispatch({ type: WalletActions.SET_USERNAME, payload: username });
-
-
-      //TODO why dis no worky
-      //if keepkey available, connect
-      connectWallet("KEEPKEY");
 
       //if auto connecting
       const isOnboarded = localStorage.getItem("userOnboarded");
@@ -254,6 +250,7 @@ export const PioneerProvider = ({
       // @ts-ignore
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
 
+      //TODO why dis no worky
 
       //@TODO if any wallet been connected before connect
     } catch (e) {
@@ -270,11 +267,13 @@ export const PioneerProvider = ({
 
   useEffect(() => {
     if(state && state.app){
+      //if keepkey available, connect
+      dispatch({ type: WalletActions.SET_PUBKEY_CONTEXT, payload: state.app.pubkeyContext });
       dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: state.app.assetContext });
       dispatch({ type: WalletActions.SET_BLOCKCHAIN_CONTEXT, payload: state.app.blockchainContext });
       dispatch({ type: WalletActions.SET_CONTEXT, payload: state.app.context });
     }
-  }, [state?.app, state?.app?.context, state?.app?.assetContext, state?.app?.blockchainContext]);
+  }, [state?.app, state?.app?.context, state?.app?.assetContext, state?.app?.blockchainContext, state?.app?.pubkeyContext]);
 
   // end
   const value: any = useMemo(

@@ -50,15 +50,19 @@ import {
   ModalFooter,
   Select,
 } from "@chakra-ui/react";
-import { JSXElementConstructor, Key, ReactElement, ReactFragment,
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactFragment,
   SetStateAction,
   useContext,
   useEffect,
-  useState
+  useState,
 } from "react";
-import {FaCog} from "react-icons/fa";
-import {Img} from "react-image";
-import {KeepKeyIcon} from "lib/assets/Icons/KeepKeyIcon";
+import { FaCog } from "react-icons/fa";
+import { Img } from "react-image";
+import { KeepKeyIcon } from "lib/assets/Icons/KeepKeyIcon";
 // @ts-ignore
 import KEEPKEY_ICON from "lib/assets/png/keepkey.png";
 // @ts-ignore
@@ -66,10 +70,10 @@ import METAMASK_ICON from "lib/assets/png/metamask.png";
 // @ts-ignore
 import PIONEER_ICON from "lib/assets/png/pioneer.png";
 //@ts-ignore
-import {ModalContext} from "lib/components/modals";
+import { ModalContext } from "lib/components/modals";
 import SettingsModal from "lib/components/modals/SettingsModal";
-import {MiddleEllipsis} from "lib/components/utils";
-import {usePioneer} from "lib/context/Pioneer";
+import { MiddleEllipsis } from "lib/components/utils";
+import { usePioneer } from "lib/context/Pioneer";
 
 import Balances from "./Pioneer/Balances";
 import Wallets from "./Pioneer/Wallets";
@@ -92,9 +96,9 @@ const getWalletBadgeContent = (walletType: string) => {
   const icon = icons[walletType];
 
   return (
-      <AvatarBadge boxSize="1.25em" bg="green.500">
-        <Image rounded="full" src={icon}/>
-      </AvatarBadge>
+    <AvatarBadge boxSize="1.25em" bg="green.500">
+      <Image rounded="full" src={icon} />
+    </AvatarBadge>
   );
 };
 
@@ -108,16 +112,16 @@ const getWalletSettingsContent = (walletType: string) => {
   const icon = icons[walletType];
 
   if (!icon) {
-    return <div/>;
+    return <div />;
   }
 
   return icon;
 };
 
 const Pioneer = () => {
-  const {state, dispatch, connectWallet} = usePioneer();
-  const {api, app, user, status} = state;
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { state, dispatch, connectWallet } = usePioneer();
+  const { api, app, user, status } = state;
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // local
   const [walletsAvailable, setWalletsAvailable] = useState([]);
@@ -141,7 +145,11 @@ const Pioneer = () => {
   const [pubkeys, setPubkeys] = useState([]);
   const [balances, setBalances] = useState([]);
 
-  const handleWalletClick = (wallet: { type: any; icon?: string | undefined; isConnected?: any; }) => {
+  const handleWalletClick = (wallet: {
+    type: any;
+    icon?: string | undefined;
+    isConnected?: any;
+  }) => {
     console.log("Clicked wallet:", wallet.type);
     connectWallet(wallet.type);
     // Here you can use the 'connectMethodName' to handle specific click actions
@@ -149,41 +157,55 @@ const Pioneer = () => {
   };
 
   const renderWallets = () => {
-    console.log("rendering wallets!")
-    console.log("rendering wallets!",app?.wallets)
-    return walletsAvailable.map((wallet: { type: boolean | Key | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | null | undefined; icon: string | undefined; isConnected: any; }) => (
-        <Card key={wallet.type} align="center" onClick={() => handleWalletClick(wallet)}>
+    console.log("rendering wallets!");
+    console.log("rendering wallets!", app?.wallets);
+    return walletsAvailable.map(
+      (wallet: {
+        type:
+          | boolean
+          | Key
+          | ReactElement<any, string | JSXElementConstructor<any>>
+          | ReactFragment
+          | null
+          | undefined;
+        icon: string | undefined;
+        isConnected: any;
+      }) => (
+        <Card
+          key={wallet.type}
+          align="center"
+          onClick={() => handleWalletClick(wallet)}
+        >
           <CardBody>
             <Avatar src={wallet.icon}>
               {wallet.isConnected ? (
-                  <AvatarBadge boxSize="1.25em" bg="green.500" />
+                <AvatarBadge boxSize="1.25em" bg="green.500" />
               ) : (
-                  <AvatarBadge boxSize="1.25em" bg="red.500" />
+                <AvatarBadge boxSize="1.25em" bg="red.500" />
               )}
             </Avatar>
           </CardBody>
           <small>{wallet.type}</small>
         </Card>
-    ));
+      )
+    );
   };
 
-  const onStart = async function(){
-    try{
-      console.log("onStart")
-      console.log("wallets",app.wallets)
-      if(app.wallets){
-        setWalletsAvailable(app.wallets)
+  const onStart = async function () {
+    try {
+      console.log("onStart");
+      if (app && app.wallets) {
+        console.log("wallets", app.wallets);
+        setWalletsAvailable(app.wallets);
+        connectWallet('KEEPKEY')
       }
-
-    }catch(e){
-      console.error(e)
+    } catch (e) {
+      console.error(e);
     }
-  }
+  };
   useEffect(() => {
-    onStart()
+    onStart();
   }, [app, app?.wallets]);
-
-
 
   const settingsSelected = async function () {
     try {
@@ -196,8 +218,6 @@ const Pioneer = () => {
 
   const setContextWallet = async function (wallet: string) {
     try {
-
-
     } catch (e) {
       console.error("header e: ", e);
     }
@@ -206,7 +226,6 @@ const Pioneer = () => {
   const setUser = async function () {
     try {
       console.log("wallets: ", app?.wallets);
-
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -218,11 +237,7 @@ const Pioneer = () => {
 
   useEffect(() => {
     setUser();
-  }, [
-    status,
-    app,
-    app?.wallets,
-  ]);
+  }, [status, app, app?.wallets]);
 
   useEffect(() => {
     dispatch({ type: "SET_CONTEXT", payload: context });

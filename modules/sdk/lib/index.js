@@ -36,8 +36,12 @@ class SDK {
         this.pioneer = null;
         this.swapKit = null;
         this.context = "";
+        this.pubkeyContext = null;
         this.assetContext = null;
         this.blockchainContext = null;
+        this.outboundAssetContext = null;
+        this.outboundBlockchainContext = null;
+        this.outboundPubkeyContext = null;
         this.wallets = [];
         // @ts-ignore
         this.init = async function () {
@@ -119,48 +123,12 @@ class SDK {
                     this.wallets[matchingWalletIndex].context = context;
                     this.wallets[matchingWalletIndex].connected = true;
                     this.wallets[matchingWalletIndex].status = 'connected';
+                    if (!this.blockchainContext)
+                        this.blockchainContext = pioneer_caip_1.primaryBlockchains['eip155:1/slip44:60'];
+                    if (!this.assetContext)
+                        this.assetContext = pioneer_caip_1.primaryAssets['eip155:1/slip44:60'];
                     this.setContext(context);
-                    //get all pubkeys
-                    let pubkeys = [];
-                    for (let i = 0; i < AllChainsSupported.length; i++) {
-                        let chain = AllChainsSupported[i];
-                        log.info(tag, "chain: ", chain);
-                        try {
-                            let walletInfo = await this.swapKit.getWalletByChain(chain);
-                            log.info(tag, "walletInfo: ", walletInfo);
-                            let address = walletInfo.address;
-                            log.info(tag, "address: ", address);
-                            let pubkey = {
-                                context,
-                                wallet: walletSelected.type,
-                                symbol: chain,
-                                network: chain,
-                                blockchain: pioneer_coins_1.COIN_MAP_LONG[chain] || 'unknown',
-                                type: 'address',
-                                script_type: 'unknown',
-                                path: 'unknown',
-                                addressNList: 'unknown',
-                                networkCaip: pioneer_caip_1.shortListSymbolToCaip[chain],
-                                master: address,
-                                pubkey: address,
-                                address,
-                            };
-                            //exclude eip:155
-                            if (chain === 'ARB' || chain === 'AVAX' || chain === 'MATIC' || chain === 'OP' || chain === 'BSC') {
-                                //redundant pubkeys
-                            }
-                            else {
-                                pubkeys.push(pubkey);
-                                log.info(tag, "pubkey: ", pubkey);
-                            }
-                            //get balance
-                            this.balances.push(walletInfo.balance);
-                        }
-                        catch (e) {
-                            log.error("failed on chain: ", chain);
-                            log.error("e: ", e);
-                        }
-                    }
+                    this.refresh(context);
                 }
                 else {
                     throw Error("Failed to pair wallet! " + walletSelected.type);
@@ -175,6 +143,72 @@ class SDK {
                 // log.error(tag, "e3: ", e.response.data)
             }
         };
+        this.refresh = async function (context) {
+            let tag = TAG + " | refresh | ";
+            try {
+                //verify context exists
+                log.info(tag, "context: ", context);
+                const walletWithContext = this.wallets.find((wallet) => wallet.context === context);
+                if (!walletWithContext)
+                    throw Error("Context does not exist! " + context);
+                log.info(tag, "walletWithContext: ", walletWithContext);
+                //get chains of wallet
+                const chains = Object.keys(this.swapKit.connectedWallets);
+                //get address array
+                const addressArray = await Promise.all(
+                // @ts-ignore
+                chains.map(this.swapKit.getAddress));
+                log.info(tag, "addressArray: ", addressArray);
+                for (let i = 0; i < chains.length; i++) {
+                    let chain = chains[i];
+                    let address = addressArray[i];
+                    let pubkey = {
+                        context,
+                        // wallet:walletSelected.type,
+                        symbol: chain,
+                        blockchain: pioneer_coins_1.COIN_MAP_LONG[chain] || 'unknown',
+                        type: 'address',
+                        caip: pioneer_caip_1.shortListSymbolToCaip[chain],
+                        master: address,
+                        pubkey: address,
+                        address,
+                    };
+                    this.pubkeys.push(pubkey);
+                }
+                //set pubkeys
+                //calculate walletDaa
+                const walletDataArray = await Promise.all(
+                // @ts-ignore
+                chains.map(this.swapKit.getWalletByChain));
+                log.info(tag, "walletDataArray: ", walletDataArray);
+                //set balances
+                for (let i = 0; i < walletDataArray.length; i++) {
+                    let walletData = walletDataArray[i];
+                    log.info(tag, "walletData: ", walletData);
+                    let chain = chains[i];
+                    log.info(tag, "chain: ", chain);
+                    for (let j = 0; j < walletData.balance.length; j++) {
+                        let balance = walletData.balance[j];
+                        log.info(tag, "balance: ", balance);
+                        this.balances.push(balance);
+                    }
+                }
+                // //set pubkey for context
+                // let pubkeysForContext = this.pubkeys.filter((item: { context: string }) => item.context === context);
+                // log.info(tag, "pubkeysForContext: ", pubkeysForContext)
+                log.info(tag, "this.blockchainContext.caip: ", this.blockchainContext.caip);
+                //pubkey for blockchain context
+                let pubkeysForBlockchainContext = this.pubkeys.find((item) => item.caip === this.blockchainContext.caip);
+                log.info(tag, "pubkeysForBlockchainContext: ", pubkeysForBlockchainContext);
+                if (pubkeysForBlockchainContext)
+                    this.pubkeyContext = pubkeysForBlockchainContext;
+                //TODO if no pubkey for blockchain context, then dont allow context switching
+                return true;
+            }
+            catch (e) {
+                log.error(tag, "e: ", e);
+            }
+        };
         this.setContext = async function (context) {
             let tag = TAG + " | setContext | ";
             try {
@@ -184,38 +218,32 @@ class SDK {
                 if (isContextExist) {
                     //if success
                     this.context = context;
-                    // let result = await this.pioneer.SetContext({context})
-                    // log.debug(tag,"result: ",result)
-                    if (!this.blockchainContext) {
-                        //set to ETH (default)
-                        this.blockchainContext = pioneer_caip_1.primaryBlockchains['eip155:1/slip44:60'];
-                    }
-                    if (!this.assetContext) {
-                        this.assetContext = pioneer_caip_1.primaryAssets['eip155:1/slip44:60'];
-                    }
-                    //if no output set to BTC IF wallet supports it, if not USDC (TODO set to PRO token)
-                    //pubkey pubkey context
-                    let blockchain = this.blockchainContext;
-                    //get pubkey for blockchain
-                    log.debug(tag, "this.pubkeys: ", this.pubkeys);
-                    log.debug(tag, "blockchainContext: ", blockchain);
-                    log.debug(tag, "blockchain: ", blockchain.name);
-                    log.debug(tag, "context: ", context);
-                    let pubkeysForContext = this.pubkeys.filter((item) => item.context === context);
-                    log.debug(tag, "pubkeysForContext: ", pubkeysForContext);
-                    // let pubkey = pubkeysForContext.find(
-                    //     (item: { blockchain: any; context: string }) => item.blockchain === blockchain.name && item.context === context
-                    // );
-                    // log.debug(tag, "pubkey: ", pubkey);
+                    //TODO refresh
+                    // if(this.blockchainContext && this.assetContext){
+                    //     //update pubkey context
+                    //     let blockchain = this.blockchainContext
+                    //     //get pubkey for blockchain
+                    //     log.info(tag,"this.pubkeys: ",this.pubkeys)
+                    //     log.info(tag,"blockchainContext: ",blockchain)
+                    //     log.info(tag,"blockchain: ",blockchain.name)
+                    //     log.info(tag,"context: ",context)
+                    //     let pubkeysForContext = this.pubkeys.filter((item: { context: string }) => item.context === context);
+                    //     log.info(tag, "pubkeysForContext: ", pubkeysForContext);
                     //
-                    // if(pubkey) {
-                    //     this.pubkeyContext = pubkey
-                    //     log.debug(tag,"pubkeyContext: ",this.pubkeyContext)
-                    // } else {
-                    //     log.debug(tag,"pubkeys: ",this.pubkeys)
-                    //     log.debug(tag,"pubkeysForContext: ",pubkeysForContext)
+                    //     let pubkey = pubkeysForContext.find(
+                    //         (item: { blockchain: any; context: string }) => item.blockchain === blockchain.name && item.context === context
+                    //     );
+                    //     log.info(tag, "pubkey: ", pubkey);
                     //
-                    //     throw Error("unable to find ("+blockchain.name+") pubkey for context! "+context)
+                    //     if(pubkey) {
+                    //         this.pubkeyContext = pubkey
+                    //         log.info(tag,"pubkeyContext: ",this.pubkeyContext)
+                    //     } else {
+                    //         log.info(tag,"pubkeys: ",this.pubkeys)
+                    //         log.info(tag,"pubkeysForContext: ",pubkeysForContext)
+                    //
+                    //         throw Error("unable to find ("+blockchain.name+") pubkey for context! "+context)
+                    //     }
                     // }
                     return { success: true };
                 }

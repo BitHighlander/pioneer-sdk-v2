@@ -8,6 +8,9 @@ export declare class SDK {
     private assetContext;
     private blockchainContext;
     private pubkeyContext;
+    private outboundAssetContext;
+    private outboundBlockchainContext;
+    private outboundPubkeyContext;
     private swapKit;
     private pioneer;
     private paths;
@@ -17,6 +20,8 @@ export declare class SDK {
     private nfts;
     private pairWallet;
     private setContext;
+    private refresh;
+    private setPubkeyContext;
     constructor(spec: string, config: any);
 }
 export default SDK;

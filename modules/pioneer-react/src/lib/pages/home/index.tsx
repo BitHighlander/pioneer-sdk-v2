@@ -17,15 +17,25 @@ import WalletSelect from "lib/components/WalletSelect";
 
 const Home = () => {
   const { state } = usePioneer();
-  const { api, app, context, assetContext, blockchainContext, pubkeyContext, modals } =
-    state;
+  const {
+    api,
+    app,
+    context,
+    assetContext,
+    blockchainContext,
+    pubkeyContext,
+    modals,
+  } = state;
   const [address, setAddress] = useState("");
   const [modalType, setModalType] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     console.log("2 pubkeyContext: ", pubkeyContext);
-    setAddress(pubkeyContext.master || pubkeyContext.pubkey || pubkeyContext);
+    if (pubkeyContext)
+      setAddress(
+        pubkeyContext?.master || pubkeyContext?.pubkey || pubkeyContext
+      );
   }, [pubkeyContext]);
 
   const openModal = (type: any) => {
@@ -33,12 +43,15 @@ const Home = () => {
     onOpen();
   };
 
-  let refresh = async () => {
-      //TODO why do I need to press refresh?
-      console.log("2 pubkeyContext: ", pubkeyContext);
-      setAddress(pubkeyContext.master || pubkeyContext.pubkey || pubkeyContext);
-      console.log("assetContext: ",assetContext)
-  }
+  const refresh = async () => {
+    //TODO why do I need to press refresh?
+    console.log("2 pubkeyContext: ", pubkeyContext);
+    if (pubkeyContext)
+      setAddress(
+        pubkeyContext?.master || pubkeyContext?.pubkey || pubkeyContext
+      );
+    console.log("pubkeyContext: ", pubkeyContext);
+  };
 
   return (
     <div>
@@ -64,7 +77,11 @@ const Home = () => {
                 <BlockchainSelect onClose={onClose}></BlockchainSelect>
               </div>
             )}
-            {modalType === "View Address" && <div>address: {address}</div>}
+            {modalType === "View Address" && (
+              <div>
+                {JSON.stringify(pubkeyContext)} address: {address}
+              </div>
+            )}
             {modalType === "Select Outbound" && (
               <div>
                 <BlockchainSelect onClose={onClose}></BlockchainSelect>
