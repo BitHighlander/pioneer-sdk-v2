@@ -56,7 +56,7 @@ export class SDK {
     // public broadcast: (tx:any) => Promise<any>;
     private setContext: (context: string) => Promise<{ success: boolean }>;
     private refresh: (context: string) => Promise<any>;
-    private setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
+    // private setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
     constructor(spec:string,config:any) {
         this.status = 'preInit'
         this.spec = config.spec || 'https://pioneers.dev/spec/swagger'
@@ -213,7 +213,7 @@ export class SDK {
                 log.info(tag,"walletDataArray: ",walletDataArray)
                 //set balances
                 for(let i = 0; i < walletDataArray.length; i++){
-                    let walletData = walletDataArray[i]
+                    let walletData:any = walletDataArray[i]
                     log.info(tag,"walletData: ",walletData)
                     let chain = chains[i]
                     log.info(tag,"chain: ",chain)

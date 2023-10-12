@@ -21,7 +21,6 @@ export declare class SDK {
     private pairWallet;
     private setContext;
     private refresh;
-    private setPubkeyContext;
     constructor(spec: string, config: any);
 }
 export default SDK;

@@ -1,6 +1,6 @@
 {
   "name": "@pioneer-sdk/sdk-v2",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -31,7 +31,7 @@
     "@pioneer-platform/metamask": "^3.0.1",
     "@pioneer-platform/okx": "^3.0.1",
     "@pioneer-platform/pioneer-caip": "^8.1.81",
-    "@pioneer-platform/pioneer-client": "^9.0.18",
+    "@pioneer-platform/pioneer-client": "^9.0.19",
     "@pioneer-platform/pioneer-coins": "^8.1.72",
     "@pioneer-platform/pioneer-events": "^8.1.52",
     "@pioneer-platform/pioneer-invoke": "^8.1.43",

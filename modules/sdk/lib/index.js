@@ -23,6 +23,7 @@ const pioneer_client_1 = __importDefault(require("@pioneer-platform/pioneer-clie
 // @ts-ignore
 const pioneer_caip_1 = require("@pioneer-platform/pioneer-caip");
 class SDK {
+    // private setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
     constructor(spec, config) {
         this.status = 'preInit';
         this.spec = config.spec || 'https://pioneers.dev/spec/swagger';
