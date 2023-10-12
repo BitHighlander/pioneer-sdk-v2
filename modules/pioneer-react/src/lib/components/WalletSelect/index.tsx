@@ -43,8 +43,8 @@ export default function WalletSelect({ onClose }) {
       //console.log("matchedWallet: ", matchedWallet);
       if (matchedWallet) {
         setWalletType(matchedWallet.type);
-        const context = await app.setContext(matchedWallet.wallet);
-        //console.log("result change: ", context);
+        const context = await app.setContext(matchedWallet.wallet.context);
+        console.log("result change: ", context);
         //console.log("app.context: ", app.context);
         setContext(app.context);
         //console.log(
@@ -52,7 +52,7 @@ export default function WalletSelect({ onClose }) {
         //   app.pubkeyContext.master || app.pubkeyContext.pubkey
         // );
         const pubkeyContext =
-          app.pubkeyContext.master || app.pubkeyContext.pubkey;
+          app?.pubkeyContext?.master || app?.pubkeyContext?.pubkey;
         setPubkeyContext(pubkeyContext);
         dispatch({ type: "SET_CONTEXT", payload: app.context });
         dispatch({ type: "SET_PUBKEY_CONTEXT", payload: app.pubkeyContext });

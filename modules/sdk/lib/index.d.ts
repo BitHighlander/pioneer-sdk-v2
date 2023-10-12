@@ -18,6 +18,7 @@ export declare class SDK {
     private wallets;
     private balances;
     private nfts;
+    private events;
     private pairWallet;
     private setContext;
     private refresh;

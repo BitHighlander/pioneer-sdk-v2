@@ -40,18 +40,22 @@ export enum WalletActions {
   OPEN_MODAL = "OPEN_MODAL",
   SET_API = "SET_API",
   SET_APP = "SET_APP",
-  SET_WALLET = "SET_WALLET",
-  SET_WALLET_DESCRIPTIONS = "SET_WALLET_DESCRIPTIONS",
+  SET_WALLETS = "SET_WALLETS",
   SET_CONTEXT = "SET_CONTEXT",
   SET_ASSET_CONTEXT = "SET_ASSET_CONTEXT",
   SET_BLOCKCHAIN_CONTEXT = "SET_BLOCKCHAIN_CONTEXT",
   SET_PUBKEY_CONTEXT = "SET_PUBKEY_CONTEXT",
+  SET_OUTBOUND_CONTEXT = "SET_OUTBOUND_CONTEXT",
+  SET_OUTBOUND_ASSET_CONTEXT = "SET_OUTBOUND_ASSET_CONTEXT",
+  SET_OUTBOUND_BLOCKCHAIN_CONTEXT = "SET_OUTBOUND_BLOCKCHAIN_CONTEXT",
+  SET_OUTBOUND_PUBKEY_CONTEXT = "SET_OUTBOUND_PUBKEY_CONTEXT",
+  SET_BALANCES = "SET_BALANCES",
+  SET_PUBKEYS = "SET_PUBKEYS",
   ADD_WALLET = "ADD_WALLET",
   RESET_STATE = "RESET_STATE",
 }
 
 export interface InitialState {
-  // keyring: Keyring;
   status: any;
   username: string;
   serviceKey: string;
@@ -59,7 +63,14 @@ export interface InitialState {
   context: string;
   assetContext: string;
   blockchainContext: string;
-  pubkeyContext: string;
+  pubkeyContext: any;
+  outboundContext: any; // Adjusted
+  outboundAssetContext: any; // Adjusted
+  outboundBlockchainContext: any; // Adjusted
+  outboundPubkeyContext: any; // Adjusted
+  balances: any[]; // Adjusted assuming it's an array
+  pubkeys: any[]; // Adjusted assuming it's an array
+  wallets: any[]; // Adjusted assuming it's an array
   walletDescriptions: any[];
   totalValueUsd: number;
   app: any;
@@ -75,11 +86,35 @@ const initialState: InitialState = {
   assetContext: "",
   blockchainContext: "",
   pubkeyContext: "",
+  outboundContext: null,
+  outboundAssetContext: null,
+  outboundBlockchainContext: null,
+  outboundPubkeyContext: null,
+  balances: [],
+  pubkeys: [],
+  wallets: [],
   walletDescriptions: [],
   totalValueUsd: 0,
   app: null,
   api: null,
 };
+
+export interface IPioneerContext {
+  state: InitialState;
+  username: string | null;
+  context: string | null;
+  status: string | null;
+  totalValueUsd: number | null;
+  assetContext: string | null;
+  blockchainContext: string | null;
+  pubkeyContext: string | null;
+  outboundContext: string | null; // Adjusted
+  outboundAssetContext: string | null; // Adjusted
+  outboundBlockchainContext: string | null; // Adjusted
+  outboundPubkeyContext: string | null; // Adjusted
+  app: any;
+  api: any;
+}
 
 export interface IPioneerContext {
   state: InitialState;
@@ -100,10 +135,17 @@ export type ActionTypes =
   | { type: WalletActions.OPEN_MODAL; payload: string }
   | { type: WalletActions.SET_APP; payload: any }
   | { type: WalletActions.SET_API; payload: any }
+  | { type: WalletActions.SET_WALLETS; payload: any }
   | { type: WalletActions.SET_CONTEXT; payload: any }
   | { type: WalletActions.SET_ASSET_CONTEXT; payload: any }
   | { type: WalletActions.SET_BLOCKCHAIN_CONTEXT; payload: any }
   | { type: WalletActions.SET_PUBKEY_CONTEXT; payload: any }
+  | { type: WalletActions.SET_OUTBOUND_CONTEXT; payload: any }
+  | { type: WalletActions.SET_OUTBOUND_ASSET_CONTEXT; payload: any }
+  | { type: WalletActions.SET_OUTBOUND_BLOCKCHAIN_CONTEXT; payload: any }
+  | { type: WalletActions.SET_OUTBOUND_PUBKEY_CONTEXT; payload: any }
+  | { type: WalletActions.SET_BALANCES; payload: any }
+  | { type: WalletActions.SET_PUBKEYS; payload: any }
   | { type: WalletActions.ADD_WALLET; payload: any }
   | { type: WalletActions.RESET_STATE };
 
@@ -112,27 +154,60 @@ const reducer = (state: InitialState, action: ActionTypes) => {
     case WalletActions.SET_STATUS:
       eventEmitter.emit("SET_STATUS", action.payload);
       return { ...state, status: action.payload };
-    case WalletActions.SET_CONTEXT:
-      //eventEmitter.emit("SET_CONTEXT", action.payload);
-      return { ...state, context: action.payload };
-    case WalletActions.SET_ASSET_CONTEXT:
-      //eventEmitter.emit("SET_ASSET_CONTEXT", action.payload);
-      return { ...state, assetContext: action.payload };
-    case WalletActions.SET_BLOCKCHAIN_CONTEXT:
-      //eventEmitter.emit("SET_BLOCKCHAIN_CONTEXT", action.payload);
-      return { ...state, blockchainContext: action.payload };
-    case WalletActions.SET_PUBKEY_CONTEXT:
-      //eventEmitter.emit("SET_PUBKEY_CONTEXT", action.payload);
-      return { ...state, pubkeyContext: action.payload };
+
     case WalletActions.SET_USERNAME:
       //eventEmitter.emit("SET_USERNAME", action.payload);
       return { ...state, username: action.payload };
+
     case WalletActions.OPEN_MODAL:
       return { ...state, payload: action.payload };
-    case WalletActions.SET_APP:
-      return { ...state, app: action.payload };
+
     case WalletActions.SET_API:
       return { ...state, api: action.payload };
+
+    case WalletActions.SET_APP:
+      return { ...state, app: action.payload };
+
+    case WalletActions.SET_WALLETS:
+      return { ...state, wallets: action.payload };
+
+    case WalletActions.SET_CONTEXT:
+      //eventEmitter.emit("SET_CONTEXT", action.payload);
+      return { ...state, context: action.payload };
+
+    case WalletActions.SET_ASSET_CONTEXT:
+      //eventEmitter.emit("SET_ASSET_CONTEXT", action.payload);
+      return { ...state, assetContext: action.payload };
+
+    case WalletActions.SET_BLOCKCHAIN_CONTEXT:
+      //eventEmitter.emit("SET_BLOCKCHAIN_CONTEXT", action.payload);
+      return { ...state, blockchainContext: action.payload };
+
+    case WalletActions.SET_PUBKEY_CONTEXT:
+      //eventEmitter.emit("SET_PUBKEY_CONTEXT", action.payload);
+      return { ...state, pubkeyContext: action.payload };
+
+    case WalletActions.SET_OUTBOUND_CONTEXT:
+      return { ...state, outboundContext: action.payload };
+
+    case WalletActions.SET_OUTBOUND_ASSET_CONTEXT:
+      return { ...state, outboundAssetContext: action.payload };
+
+    case WalletActions.SET_OUTBOUND_BLOCKCHAIN_CONTEXT:
+      return { ...state, outboundBlockchainContext: action.payload };
+
+    case WalletActions.SET_OUTBOUND_PUBKEY_CONTEXT:
+      return { ...state, outboundPubkeyContext: action.payload };
+
+    case WalletActions.SET_BALANCES:
+      return { ...state, balances: action.payload };
+
+    case WalletActions.SET_PUBKEYS:
+      return { ...state, pubkeys: action.payload };
+
+    case WalletActions.ADD_WALLET:
+      return { ...state, wallets: [...state.wallets, action.payload] }; // Assuming wallets is an array in the state.
+
     case WalletActions.RESET_STATE:
       return {
         ...state,
@@ -141,7 +216,9 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         username: null,
         context: null,
         status: null,
+        // Add other state properties you want to reset here...
       };
+
     default:
       return state;
   }
@@ -178,11 +255,23 @@ export const PioneerProvider = ({
       console.log("state.app.assetContext: ", state.app.assetContext);
       console.log("state.app.blockchainContext: ", state.app.blockchainContext);
       console.log("state.app.context: ", state.app.context);
-      if(state && state.app){
-        dispatch({ type: WalletActions.SET_CONTEXT, payload: state.app.context });
-        dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: state.app.assetContext });
-        dispatch({ type: WalletActions.SET_BLOCKCHAIN_CONTEXT, payload: state.app.blockchainContext });
-        dispatch({ type: WalletActions.SET_PUBKEY_CONTEXT, payload: state.app.pubkeyContext });
+      if (state && state.app) {
+        dispatch({
+          type: WalletActions.SET_CONTEXT,
+          payload: state.app.context,
+        });
+        dispatch({
+          type: WalletActions.SET_ASSET_CONTEXT,
+          payload: state.app.assetContext,
+        });
+        dispatch({
+          type: WalletActions.SET_BLOCKCHAIN_CONTEXT,
+          payload: state.app.blockchainContext,
+        });
+        dispatch({
+          type: WalletActions.SET_PUBKEY_CONTEXT,
+          payload: state.app.pubkeyContext,
+        });
       }
     } catch (e) {
       console.error(e);
@@ -250,6 +339,21 @@ export const PioneerProvider = ({
       // @ts-ignore
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
 
+      //events
+      const events = appInit.events;
+
+      const walletActionsArray = Object.values(WalletActions);
+
+      walletActionsArray.forEach((action) => {
+        events.on(action, (data: any) => {
+          // @ts-ignore
+          dispatch({
+            type: action,
+            payload: data,
+          });
+        });
+      });
+
       //TODO why dis no worky
 
       //@TODO if any wallet been connected before connect
@@ -266,14 +370,29 @@ export const PioneerProvider = ({
   }, []);
 
   useEffect(() => {
-    if(state && state.app){
+    if (state && state.app) {
       //if keepkey available, connect
-      dispatch({ type: WalletActions.SET_PUBKEY_CONTEXT, payload: state.app.pubkeyContext });
-      dispatch({ type: WalletActions.SET_ASSET_CONTEXT, payload: state.app.assetContext });
-      dispatch({ type: WalletActions.SET_BLOCKCHAIN_CONTEXT, payload: state.app.blockchainContext });
+      dispatch({
+        type: WalletActions.SET_PUBKEY_CONTEXT,
+        payload: state.app.pubkeyContext,
+      });
+      dispatch({
+        type: WalletActions.SET_ASSET_CONTEXT,
+        payload: state.app.assetContext,
+      });
+      dispatch({
+        type: WalletActions.SET_BLOCKCHAIN_CONTEXT,
+        payload: state.app.blockchainContext,
+      });
       dispatch({ type: WalletActions.SET_CONTEXT, payload: state.app.context });
     }
-  }, [state?.app, state?.app?.context, state?.app?.assetContext, state?.app?.blockchainContext, state?.app?.pubkeyContext]);
+  }, [
+    state?.app,
+    state?.app?.context,
+    state?.app?.assetContext,
+    state?.app?.blockchainContext,
+    state?.app?.pubkeyContext,
+  ]);
 
   // end
   const value: any = useMemo(

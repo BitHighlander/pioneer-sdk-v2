@@ -11,6 +11,7 @@ exports.SDK = void 0;
 
  */
 const TAG = " | Pioneer-sdk | ";
+const events_1 = __importDefault(require("events"));
 // @ts-ignore
 const loggerdog_1 = __importDefault(require("@pioneer-platform/loggerdog"));
 const log = (0, loggerdog_1.default)();
@@ -44,6 +45,7 @@ class SDK {
         this.outboundBlockchainContext = null;
         this.outboundPubkeyContext = null;
         this.wallets = [];
+        this.events = new events_1.default();
         // @ts-ignore
         this.init = async function () {
             let tag = TAG + " | init | ";
@@ -68,7 +70,7 @@ class SDK {
                 let ethplorerApiKey = process.env.VITE_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7';
                 let covalentApiKey = process.env.VITE_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q';
                 let utxoApiKey = process.env.VITE_BLOCKCHAIR_API_KEY || 'A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf';
-                let walletConnectProjectId = process.env.VITE_WALLET_CONNECT_PROJECT_ID || '';
+                let walletConnectProjectId = process.env.VITE_WALLET_CONNECT_PROJECT_ID || '18224df5f72924a5f6b3569fbd56ae16';
                 let stagenet = false;
                 let configKit = {
                     config: {
@@ -82,6 +84,7 @@ class SDK {
                 };
                 log.info(tag, "configKit: ", configKit);
                 await this.swapKit.extend(configKit);
+                this.events.emit("SET_STATUS", 'init');
                 //done registering, now get the user
                 //this.refresh()
                 if (!this.pioneer)
@@ -120,6 +123,7 @@ class SDK {
                         throw Error("Failed to get eth address! can not pair wallet");
                     let context = wallet.toLowerCase() + ":" + ethAddress + ".wallet";
                     log.info(tag, "context: ", context);
+                    this.events.emit("CONTEXT", context);
                     //add context to wallet
                     this.wallets[matchingWalletIndex].context = context;
                     this.wallets[matchingWalletIndex].connected = true;
@@ -176,6 +180,7 @@ class SDK {
                     };
                     this.pubkeys.push(pubkey);
                 }
+                this.events.emit("SET_PUBKEYS", this.pubkeys);
                 //set pubkeys
                 //calculate walletDaa
                 const walletDataArray = await Promise.all(
@@ -194,6 +199,7 @@ class SDK {
                         this.balances.push(balance);
                     }
                 }
+                this.events.emit("SET_BALANCES", this.balances);
                 // //set pubkey for context
                 // let pubkeysForContext = this.pubkeys.filter((item: { context: string }) => item.context === context);
                 // log.info(tag, "pubkeysForContext: ", pubkeysForContext)
@@ -204,6 +210,7 @@ class SDK {
                 if (pubkeysForBlockchainContext)
                     this.pubkeyContext = pubkeysForBlockchainContext;
                 //TODO if no pubkey for blockchain context, then dont allow context switching
+                this.events.emit("SET_PUBKEY_CONTEXT", this.pubkeyContext);
                 return true;
             }
             catch (e) {
@@ -219,6 +226,7 @@ class SDK {
                 if (isContextExist) {
                     //if success
                     this.context = context;
+                    this.events.emit("CONTEXT", context);
                     //TODO refresh
                     // if(this.blockchainContext && this.assetContext){
                     //     //update pubkey context

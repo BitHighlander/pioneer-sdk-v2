@@ -18,15 +18,15 @@ import App from "./App";
 
 // To publish run as dev uncomment
 
-// const root = ReactDOM.createRoot(
-//   document.getElementById("root") as HTMLElement
-// );
-// root.render(
-//   <>
-//     <ColorModeScript initialColorMode={theme.config?.initialColorMode} />
-//     <App />
-//   </>
-// );
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+root.render(
+  <>
+    <ColorModeScript initialColorMode={theme.config?.initialColorMode} />
+    <App />
+  </>
+);
 
 //end dev mode
 

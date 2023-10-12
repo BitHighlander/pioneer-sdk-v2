@@ -16,7 +16,7 @@ import { usePioneer } from "lib/context/Pioneer";
 import MiddleEllipsis from "lib/components/MiddleEllipsis";
 
 //@ts-ignore
-export default function AssetSelect({ onClose }) {
+export default function AssetSelect({ onClose, onlyOwned }) {
   const { state, dispatch } = usePioneer();
   const { api, app, user } = state;
   const [searchQuery, setSearchQuery] = useState("");
@@ -67,18 +67,25 @@ export default function AssetSelect({ onClose }) {
         alert("Failed to init API!");
         return;
       }
+      console.log("balances: ",app.balances)
+      //if onlyOwned
+      if(onlyOwned){
+        setShowOwnedAssets(true);
 
-      const search = {
-        limit: itemsPerPage,
-        skip: pageIndex * itemsPerPage,
-        collection: "assets",
-        ownedBy: showOwnedAssets ? user.id : undefined,
-      };
-
-      const info = await api.SearchAtlas(search);
-      const currentPageData = info.data.results;
-      setCurrentPage(currentPageData);
-      setTotalAssets(info.data.total); // Update total assets count
+        //load balances
+        console.log("balances: ",app.balances)
+      }
+      // const search = {
+      //   limit: itemsPerPage,
+      //   skip: pageIndex * itemsPerPage,
+      //   collection: "assets",
+      //   ownedBy: showOwnedAssets ? user.id : undefined,
+      // };
+      //
+      // const info = await api.SearchAtlas(search);
+      // const currentPageData = info.data.results;
+      // setCurrentPage(currentPageData);
+      // setTotalAssets(info.data.total); // Update total assets count
     } catch (e) {
       console.error(e);
     }
