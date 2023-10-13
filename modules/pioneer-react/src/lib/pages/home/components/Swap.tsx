@@ -33,6 +33,7 @@ import { QuoteRoute, SwapKitApi } from "@pioneer-platform/swapkit-api";
 import { Chain } from "@pioneer-platform/types";
 import { SettingsIcon, ArrowUpDownIcon, AddIcon } from "@chakra-ui/icons";
 import { usePioneer } from "lib/context/Pioneer";
+import { FeeOption } from "@pioneer-platform/types";
 import React, { useState, useCallback } from "react";
 import {
   Amount,
@@ -126,6 +127,33 @@ const Swap = ({ openModal }) => {
       setLoading(false);
     }
   }, [inputAmount, assetContext, outboundAssetContext, app, app?.swapKit]);
+
+  const handleSwap = useCallback(
+    async (route: QuoteRoute) => {
+      const inputChain = assetContext?.asset.L1Chain;
+      const outputChain = outboundAssetContext?.asset.L1Chain;
+      if (!assetContext || !outboundAssetContext || !app || !app?.swapKit)
+        return;
+
+      const address = app?.swapKit.getAddress(outputChain);
+
+      const txHash = await app?.swapKit.swap({
+        route,
+        recipient: address,
+        feeOptionKey: FeeOption.Fast,
+      });
+
+      window.open(
+        app?.swapKit.getExplorerTxUrl(inputChain, txHash as string),
+        "_blank"
+      );
+    },
+    [
+      assetContext?.asset.L1Chain,
+      outboundAssetContext?.asset.L1Chain,
+      app?.swapKit,
+    ]
+  );
 
   return (
     <VStack spacing={5} align="start" p={6} borderRadius="md">
@@ -226,6 +254,9 @@ const Swap = ({ openModal }) => {
                             </Tbody>
                           </Table>
                         </TableContainer>
+                        <Button onClick={() => handleSwap(route)}>
+                          Select Route
+                        </Button>
                       </Box>
                     )}
 
@@ -235,7 +266,7 @@ const Swap = ({ openModal }) => {
                         <Heading size="xs" textTransform="uppercase">
                           Warnings
                         </Heading>
-                        {route.warnings.map((warning, warningIndex) => (
+                        {route?.warnings?.map((warning, warningIndex) => (
                           <Text key={warningIndex}>
                             {warning.warningMessage}
                           </Text>
