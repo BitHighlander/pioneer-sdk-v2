@@ -272,6 +272,7 @@ class SDK {
                 if (asset && this.assetContext && this.assetContext !== asset) {
                     this.assetContext = asset;
                     this.events.emit("SET_ASSET_CONTEXT", asset);
+                    return { success: true };
                 }
                 else {
                     return { success: false, error: "already asset context=" + asset };
@@ -287,6 +288,7 @@ class SDK {
                 if (asset && this.outboundAssetContext && this.outboundAssetContext !== asset) {
                     this.outboundAssetContext = asset;
                     this.events.emit("SET_OUTBOUND_ASSET_CONTEXT", asset);
+                    return { success: true };
                 }
                 else {
                     return { success: false, error: "already asset context=" + asset };

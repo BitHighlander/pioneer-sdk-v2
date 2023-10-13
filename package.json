@@ -20,7 +20,7 @@
     "init-env": "cp .example-env .env",
     "test": "make test",
     "test-debug": "make test debug=true",
-    "release": "make && make up=release",
+    "release": "make && make build && make up=release",
     "version:patch": "lerna version patch --yes",
     "version:minor": "lerna version minor --yes",
     "version:major": "lerna version major --yes",

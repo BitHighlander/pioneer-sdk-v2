@@ -60,7 +60,7 @@ export class SDK {
     private refresh: (context: string) => Promise<any>;
     // private setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
     private setAssetContext: (asset: any) => Promise<any>;
-    private setOutboundAssetContext: (asset: any) => Promise<{ success: boolean; error: string }>;
+    private setOutboundAssetContext: (asset: any) => Promise<any>;
     constructor(spec:string,config:any) {
         this.status = 'preInit'
         this.spec = config.spec || 'https://pioneers.dev/spec/swagger'
@@ -307,6 +307,7 @@ export class SDK {
                 if(asset && this.assetContext && this.assetContext !== asset){
                     this.assetContext = asset
                     this.events.emit("SET_ASSET_CONTEXT", asset);
+                    return {success:true}
                 }else{
                     return {success:false, error:"already asset context="+asset}
                 }
@@ -320,6 +321,7 @@ export class SDK {
                 if(asset && this.outboundAssetContext && this.outboundAssetContext !== asset){
                     this.outboundAssetContext = asset
                     this.events.emit("SET_OUTBOUND_ASSET_CONTEXT", asset);
+                    return {success:true}
                 }else{
                     return {success:false, error:"already asset context="+asset}
                 }
