@@ -10,8 +10,11 @@ clean::
 	find . -name "node_modules" -type d -prune -print | xargs du -chs && find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \; &&\
 	sh scripts/clean.sh
 
-build::
+dev::
 	yarn && yarn build && onchange 'src/**/*.ts' -- yarn build
+
+build::
+	yarn && yarn build
 
 test::
 	sh scripts/e2e-test.sh $(env) $(debug) $(coin)
