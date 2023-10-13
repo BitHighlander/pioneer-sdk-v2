@@ -1,0 +1,60 @@
+Arguments: 
+  /Users/highlander/.nvm/versions/node/v20.1.0/bin/node /Users/highlander/.nvm/versions/node/v20.1.0/bin/yarn
+
+PATH: 
+  /Users/highlander/WebstormProjects/pioneer-sdk-v2/node_modules/.bin:/Users/highlander/.nvm/versions/node/v20.1.0/lib/node_modules/pnpm/dist/node-gyp-bin:/Users/highlander/google-cloud-sdk/bin:/Users/highlander/Library/pnpm:/Users/highlander/.nvm/versions/node/v20.1.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/MacGPG2/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Users/highlander/go/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  20.1.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: ENOENT: no such file or directory, copyfile '/Users/highlander/Library/Caches/Yarn/v6/npm-brace-expansion-1.1.11-3c7fcbf529d87226f3d2f52b966ff5271eb441dd-integrity/node_modules/brace-expansion/LICENSE' -> '/Users/highlander/WebstormProjects/pioneer-sdk-v2/node_modules/lerna/node_modules/brace-expansion/LICENSE'
+
+npm manifest: 
+  {
+    "name": "pioneer-sdk",
+    "version": "0.0.1",
+    "private": true,
+    "workspaces": {
+      "packages": [
+        "e2e/**/*",
+        "intergration/**/*",
+        "modules/*",
+        "modules/sdk",
+        "apps/*"
+      ],
+      "version": "independent"
+    },
+    "scripts": {
+      "yarn": "yarn",
+      "clean": "make clean",
+      "build": "lerna run build --include-dependencies",
+      "refresh": "make clean && make",
+      "up-dev": "make && make up=dev",
+      "init-env": "cp .example-env .env",
+      "test": "make test",
+      "test-debug": "make test debug=true",
+      "release": "make && make up=release",
+      "version:patch": "lerna version patch --yes",
+      "version:minor": "lerna version minor --yes",
+      "version:major": "lerna version major --yes",
+      "publish:lerna": "lerna publish from-package --no-private --yes",
+      "build:rest": "cd services/pioneer-server && npm run docker:push:all",
+      "build:worker": "cd services/pioneer-pubkey-ingester && npm run docker:push:all"
+    },
+    "dependencies": {
+      "lerna": "^6.4.1"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
