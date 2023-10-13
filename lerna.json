@@ -10,9 +10,7 @@
     }
   },
   "packages": [
-    "apps/**/*",
     "modules/**/*",
-    "e2e/**/*"
   ],
   "version": "independent",
   "useWorkspaces": true
