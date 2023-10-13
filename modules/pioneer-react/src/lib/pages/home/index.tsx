@@ -26,6 +26,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { usePioneer } from "lib/context/Pioneer";
 import AssetSelect from "lib/components/AssetSelect";
+import OutputSelect from "lib/components/OutputSelect";
 import BlockchainSelect from "lib/components/BlockchainSelect";
 import WalletSelect from "lib/components/WalletSelect";
 import Basic from "./components/Basic";
@@ -104,7 +105,7 @@ const Home = () => {
             )}
             {modalType === "Select Outbound" && (
               <div>
-                <BlockchainSelect onClose={onClose}></BlockchainSelect>
+                <OutputSelect onClose={onClose}></OutputSelect>
               </div>
             )}
           </ModalBody>
@@ -123,6 +124,7 @@ const Home = () => {
           <Tab>Transfer</Tab>
           <Tab>Swaps</Tab>
           <Tab>Earn</Tab>
+          <Tab>Borrow</Tab>
         </TabList>
 
         <TabPanels>
@@ -141,6 +143,11 @@ const Home = () => {
           <TabPanel>
             <p>
               <h1>Earn</h1>
+            </p>
+          </TabPanel>
+          <TabPanel>
+            <p>
+              <h1>Borrow</h1>
             </p>
           </TabPanel>
         </TabPanels>

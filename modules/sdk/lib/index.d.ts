@@ -23,6 +23,7 @@ export declare class SDK {
     private setContext;
     private refresh;
     private setAssetContext;
+    private setOutboundAssetContext;
     constructor(spec: string, config: any);
 }
 export default SDK;

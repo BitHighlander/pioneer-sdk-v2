@@ -60,6 +60,7 @@ export class SDK {
     private refresh: (context: string) => Promise<any>;
     // private setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
     private setAssetContext: (asset: any) => Promise<any>;
+    private setOutboundAssetContext: (asset: any) => Promise<{ success: boolean; error: string }>;
     constructor(spec:string,config:any) {
         this.status = 'preInit'
         this.spec = config.spec || 'https://pioneers.dev/spec/swagger'
@@ -306,27 +307,19 @@ export class SDK {
                 if(asset && this.assetContext && this.assetContext !== asset){
                     this.assetContext = asset
                     this.events.emit("SET_ASSET_CONTEXT", asset);
-
-                    //TODO get blockchain for asset
-                    //set blockchain context
-
-                    // let result = await this.pioneer.SetAssetContext({asset})
-                    // log.debug(tag,"result: ",result.data)
-                    // if(result && result.data && result.data.success){
-                    //     log.debug(tag,"settingAssetContext: ",asset)
-                    //     //set blockchainContext to assets blockchain!
-                    //     if(asset?.blockchainCaip){
-                    //         let blockchain = await this.pioneer.BlockchainByCaip({caip:asset?.blockchainCaip})
-                    //         if(blockchain)await this.setBlockchainContext(blockchain)
-                    //     }
-                    //     //if success
-                    //     this.assetContext = asset
-                    //     return result.data
-                    // } else {
-                    //     log.error(tag,"result: ",result)
-                    //     log.error(tag,"result.error: ",result.error)
-                    //     return {success:false,error:result}
-                    // }
+                }else{
+                    return {success:false, error:"already asset context="+asset}
+                }
+            } catch (e) {
+                log.error(tag, "e: ", e)
+            }
+        }
+        this.setOutboundAssetContext = async function (asset:any) {
+            let tag = TAG + " | setOutputAssetContext | "
+            try {
+                if(asset && this.outboundAssetContext && this.outboundAssetContext !== asset){
+                    this.outboundAssetContext = asset
+                    this.events.emit("SET_OUTBOUND_ASSET_CONTEXT", asset);
                 }else{
                     return {success:false, error:"already asset context="+asset}
                 }

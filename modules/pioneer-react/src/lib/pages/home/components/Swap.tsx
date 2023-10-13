@@ -104,7 +104,7 @@ const Swap = ({ openModal }) => {
         recipientAddress,
         slippage: "3",
       });
-
+      console.log("routes: ", routes);
       setRoutes(routes || []);
     } catch (e) {
       console.error("ERROR: ",e);
@@ -123,10 +123,10 @@ const Swap = ({ openModal }) => {
             <Text>Chain: {assetContext?.asset?.chain || "N/A"}</Text>
             <Text>Symbol: {assetContext?.asset?.symbol || "N/A"}</Text>
             <input
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => setAmount(parseFloat(e.target.value))}
               placeholder="0.0"
               type="number"
-              value={inputAmount?.toSignificant(6)}
+              value={amount}
             />
           </div>
           <Text>
@@ -167,7 +167,7 @@ const Swap = ({ openModal }) => {
                 alignItems="center"
                 justifyContent="center"
                 _hover={{ color: "rgb(128,128,128)" }}
-                onClick={() => openModal("Select Input")}
+                onClick={() => openModal("Select Asset")}
               >
                 {!assetContext ? (
                   <Spinner size="lg" color="blue.500" />
@@ -206,7 +206,7 @@ const Swap = ({ openModal }) => {
                 alignItems="center"
                 justifyContent="center"
                 _hover={{ color: "rgb(128,128,128)" }}
-                onClick={() => openModal("Select Output")}
+                onClick={() => openModal("Select Outbound")}
               >
                 {!outboundAssetContext ? (
                   <Spinner size="lg" color="blue.500" />
