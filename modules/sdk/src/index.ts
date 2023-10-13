@@ -161,8 +161,6 @@ export class SDK {
                     this.wallets[matchingWalletIndex].context = context
                     this.wallets[matchingWalletIndex].connected = true;
                     this.wallets[matchingWalletIndex].status = 'connected';
-                    if(!this.blockchainContext)this.blockchainContext = primaryBlockchains['eip155:1/slip44:60']
-                    if(!this.assetContext)this.assetContext = primaryAssets['eip155:1/slip44:60']
                     this.setContext(context)
                     this.refresh(context)
                 } else {
@@ -231,17 +229,25 @@ export class SDK {
                     }
                 }
                 this.events.emit("SET_BALANCES", this.balances);
+                this.assetContext = this.balances[0]
+                this.events.emit("SET_ASSET_CONTEXT", this.assetContext);
+                this.outboundAssetContext = this.balances[1]
+                this.events.emit("SET_OUTBOUND_ASSET_CONTEXT", this.outboundAssetContext);
+                //set defaults
+                // if(!this.blockchainContext)this.blockchainContext = primaryBlockchains['eip155:1/slip44:60']
+                // if(!this.assetContext)this.assetContext = primaryAssets['eip155:1/slip44:60']
+
                 // //set pubkey for context
                 // let pubkeysForContext = this.pubkeys.filter((item: { context: string }) => item.context === context);
                 // log.info(tag, "pubkeysForContext: ", pubkeysForContext)
 
-                log.info(tag, "this.blockchainContext.caip: ", this.blockchainContext.caip)
+                // log.info(tag, "this.blockchainContext.caip: ", this.blockchainContext.caip)
                 //pubkey for blockchain context
-                let pubkeysForBlockchainContext = this.pubkeys.find((item: { caip: string }) => item.caip === this.blockchainContext.caip);
-                log.info(tag, "pubkeysForBlockchainContext: ", pubkeysForBlockchainContext)
-                if(pubkeysForBlockchainContext)this.pubkeyContext = pubkeysForBlockchainContext
-                //TODO if no pubkey for blockchain context, then dont allow context switching
-                this.events.emit("SET_PUBKEY_CONTEXT", this.pubkeyContext);
+                // let pubkeysForBlockchainContext = this.pubkeys.find((item: { caip: string }) => item.caip === this.blockchainContext.caip);
+                // log.info(tag, "pubkeysForBlockchainContext: ", pubkeysForBlockchainContext)
+                // if(pubkeysForBlockchainContext)this.pubkeyContext = pubkeysForBlockchainContext
+                // //TODO if no pubkey for blockchain context, then dont allow context switching
+                // this.events.emit("SET_PUBKEY_CONTEXT", this.pubkeyContext);
                 return true
             } catch (e) {
                 log.error(tag, "e: ", e)

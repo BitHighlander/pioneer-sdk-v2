@@ -2,20 +2,13 @@ import {
   Button,
   Grid,
   Heading,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
   Input,
   Spinner,
-  Box,
-  Avatar,
-  Card
+  VStack,
+  FormControl,
+  FormLabel,
+  useToast,
 } from "@chakra-ui/react";
 import { Chain } from "@pioneer-platform/types";
 import { usePioneer } from "lib/context/Pioneer";
@@ -27,6 +20,7 @@ import {
 } from "@pioneer-platform/swapkit-entities";
 
 const Transfer = ({ openModal }) => {
+  const toast = useToast();
   const { state } = usePioneer();
   const {
     api,
@@ -60,72 +54,87 @@ const Transfer = ({ openModal }) => {
   const handleSend = useCallback(async () => {
     if (!assetContext || !inputAmount || !app || !app.swapKit || !sendAmount)
       return;
+
     const assetAmount = new AssetAmount(assetContext.asset, sendAmount);
 
-    console.log("recipient: ", recipient);
-    if (!recipient) alert("Must select a recipient");
+    if (!recipient) {
+      toast({
+        title: "Error",
+        description: "Must select a recipient",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
 
-    const txHash = await app.swapKit.transfer({
-      assetAmount,
-      memo: "",
-      recipient,
-    });
-
-    window.open(
-      `${app.swapKit.getExplorerTxUrl(Chain.THORChain, txHash as string)}`,
-      "_blank"
-    );
-  }, [assetContext, inputAmount, app, app?.swapKit, recipient, sendAmount]);
+    try {
+      const txHash = await app.swapKit.transfer({
+        assetAmount,
+        memo: "",
+        recipient,
+      });
+      window.open(
+        `${app.swapKit.getExplorerTxUrl(Chain.THORChain, txHash as string)}`,
+        "_blank"
+      );
+    } catch (e) {
+      console.error(e);
+      toast({
+        title: "Error",
+        description: e.toString(),
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [
+    assetContext,
+    inputAmount,
+    app,
+    app?.swapKit,
+    recipient,
+    sendAmount,
+    toast,
+  ]);
 
   return (
-    <div>
-      <Card border="thin" borderColor="white" borderRadius="md" p={5}>
-        <Heading as="h1" size="lg">
-          Send Crypto!
-        </Heading>
-        {/*<Text>Asset: {JSON.stringify(assetContext)}</Text>*/}
-        <Text>Asset: {assetContext && assetContext?.asset?.name}</Text>
-        <Text>chain: {assetContext && assetContext?.asset?.chain}</Text>
-        <Text>symbol: {assetContext && assetContext?.asset?.symbol}</Text>
-        <Button
-          mb={4}
-          onClick={() => openModal("Select Asset")}
-          isDisabled={!balances}
-        >
-          Select Asset
-        </Button>
-
-        <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-          <div>
-            <span>Recipient:</span>
-            <input
-              onChange={(e) => setRecipient(e.target.value)}
-              placeholder="address"
-              value={recipient}
-            />
-          </div>
-
-          <div>
-            <span>Input Amount:</span>
-            <input
-              onChange={(e) => handleInputChange(e.target.value)}
-              placeholder="0.0"
-              value={inputAmount}
-            />
-          </div>
-          <Text>
-            Available Balance:{" "}
-            {assetContext && assetContext?.assetAmount?.toString()} (
-            {assetContext && assetContext?.asset?.symbol})
-          </Text>
-          {/*<Button>Send Max</Button>*/}
-        </Grid>
-
-        <Button mt={4} isLoading={isSubmitting} onClick={handleSend}>
-          {isSubmitting ? <Spinner size="xs" /> : "Send"}
-        </Button>
-      </Card>
-    </div>
+    <VStack spacing={5} align="start" p={6} borderRadius="md">
+      <Heading as="h1" size="lg">
+        Send Crypto!
+      </Heading>
+      <Text>Asset: {assetContext?.asset?.name || "N/A"}</Text>
+      <Text>Chain: {assetContext?.asset?.chain || "N/A"}</Text>
+      <Text>Symbol: {assetContext?.asset?.symbol || "N/A"}</Text>
+      <Button onClick={() => openModal("Select Asset")} isDisabled={!balances}>
+        Select Asset
+      </Button>
+      <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+        <FormControl>
+          <FormLabel>Recipient:</FormLabel>
+          <Input
+            onChange={(e) => setRecipient(e.target.value)}
+            placeholder="Address"
+            value={recipient}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Input Amount:</FormLabel>
+          <Input
+            onChange={(e) => handleInputChange(e.target.value)}
+            placeholder="0.0"
+            value={inputAmount}
+          />
+        </FormControl>
+      </Grid>
+      <Text>
+        Available Balance: {assetContext?.assetAmount?.toString() || "N/A"} (
+        {assetContext?.asset?.symbol || "N/A"})
+      </Text>
+      <Button mt={4} isLoading={isSubmitting} onClick={handleSend} w="full">
+        {isSubmitting ? <Spinner size="xs" /> : "Send"}
+      </Button>
+    </VStack>
   );
 };
 

@@ -32,6 +32,7 @@ import Basic from "./components/Basic";
 import Balances from "./components/Balances";
 // import Pubkeys from "./components/Pubkeys";
 import Transfer from "./components/Transfer";
+import Swap from "./components/Swap";
 
 const Home = () => {
   const { state } = usePioneer();
@@ -135,29 +136,7 @@ const Home = () => {
             <Transfer openModal={openModal}></Transfer>
           </TabPanel>
           <TabPanel>
-            <p>
-              <h1>Swaps</h1>
-              <br />
-              Asset Context: {assetContext?.name}
-              <Button onClick={() => openModal("Select Asset")}>
-                Select Asset
-              </Button>
-              <br />
-              Blockchain Context: {blockchainContext?.name}
-              <Button onClick={() => openModal("Select Blockchain")}>
-                Select Blockchain
-              </Button>
-              <br />
-              Address for context: {address}
-              <Button onClick={() => openModal("View Address")}>
-                View Address
-              </Button>
-              <br />
-              Outbound asset context: {address}
-              <Button onClick={() => openModal("Select Outbound")}>
-                Select asset
-              </Button>
-            </p>
+            <Swap openModal={openModal}></Swap>
           </TabPanel>
           <TabPanel>
             <p>

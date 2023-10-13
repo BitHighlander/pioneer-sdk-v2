@@ -32,7 +32,7 @@ const Basic = () => {
             </Tr>
             <Tr>
               <Td>Asset Context</Td>
-              <Td>{assetContext?.name}</Td>
+              <Td>{assetContext?.asset?.name}</Td>
             </Tr>
             <Tr>
               <Td>Blockchain Context</Td>
