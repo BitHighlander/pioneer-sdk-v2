@@ -22,6 +22,7 @@ export declare class SDK {
     private pairWallet;
     private setContext;
     private refresh;
+    private setAssetContext;
     constructor(spec: string, config: any);
 }
 export default SDK;

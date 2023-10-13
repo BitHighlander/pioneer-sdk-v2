@@ -59,6 +59,7 @@ export class SDK {
     private setContext: (context: string) => Promise<{ success: boolean }>;
     private refresh: (context: string) => Promise<any>;
     // private setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
+    private setAssetContext: (asset: any) => Promise<any>;
     constructor(spec:string,config:any) {
         this.status = 'preInit'
         this.spec = config.spec || 'https://pioneers.dev/spec/swagger'
@@ -291,6 +292,40 @@ export class SDK {
             }catch(e){
                 log.error(tag,e)
                 throw e
+            }
+        }
+        this.setAssetContext = async function (asset:any) {
+            let tag = TAG + " | setAssetContext | "
+            try {
+                if(asset && this.assetContext && this.assetContext !== asset){
+                    this.assetContext = asset
+                    this.events.emit("SET_ASSET_CONTEXT", asset);
+
+                    //TODO get blockchain for asset
+                    //set blockchain context
+
+                    // let result = await this.pioneer.SetAssetContext({asset})
+                    // log.debug(tag,"result: ",result.data)
+                    // if(result && result.data && result.data.success){
+                    //     log.debug(tag,"settingAssetContext: ",asset)
+                    //     //set blockchainContext to assets blockchain!
+                    //     if(asset?.blockchainCaip){
+                    //         let blockchain = await this.pioneer.BlockchainByCaip({caip:asset?.blockchainCaip})
+                    //         if(blockchain)await this.setBlockchainContext(blockchain)
+                    //     }
+                    //     //if success
+                    //     this.assetContext = asset
+                    //     return result.data
+                    // } else {
+                    //     log.error(tag,"result: ",result)
+                    //     log.error(tag,"result.error: ",result.error)
+                    //     return {success:false,error:result}
+                    // }
+                }else{
+                    return {success:false, error:"already asset context="+asset}
+                }
+            } catch (e) {
+                log.error(tag, "e: ", e)
             }
         }
     }

@@ -18,7 +18,7 @@ import MiddleEllipsis from "lib/components/MiddleEllipsis";
 //@ts-ignore
 export default function AssetSelect({ onClose, onlyOwned }) {
   const { state, dispatch } = usePioneer();
-  const { api, app, user } = state;
+  const { api, app, user, balances } = state;
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
@@ -67,13 +67,13 @@ export default function AssetSelect({ onClose, onlyOwned }) {
         alert("Failed to init API!");
         return;
       }
-      console.log("balances: ",app.balances)
+      console.log("balances: ", balances);
       //if onlyOwned
-      if(onlyOwned){
+      if (balances) {
         setShowOwnedAssets(true);
-
+        setCurrentPage(balances);
         //load balances
-        console.log("balances: ",app.balances)
+        console.log("balances: ", app.balances);
       }
       // const search = {
       //   limit: itemsPerPage,
@@ -93,7 +93,7 @@ export default function AssetSelect({ onClose, onlyOwned }) {
 
   useEffect(() => {
     fetchPage(currentPageIndex);
-  }, [currentPageIndex, showOwnedAssets]);
+  }, [currentPageIndex, showOwnedAssets, balances]);
 
   const [totalAssets, setTotalAssets] = useState(0);
 
@@ -133,13 +133,19 @@ export default function AssetSelect({ onClose, onlyOwned }) {
         {currentPage.map((asset: any, index: number) => (
           <Box key={index}>
             <HStack spacing={4} alignItems="center">
-              <Avatar src={asset?.image} />
+              {/*<Avatar src={asset?.image} />*/}
               <Box>
-                <small>
-                  asset: <MiddleEllipsis text={asset?.caip} />
-                </small>
+                {/*<small>*/}
+                {/*  asset: <MiddleEllipsis text={asset?.caip} />*/}
+                {/*</small>*/}
                 <br />
-                <small>name: {asset.name}</small>
+                <small>name: {asset.asset.name}</small>
+                <br />
+                <small>chain: {asset.asset.chain}</small>
+                <br />
+                <small>symbol: {asset.asset.symbol}</small>
+                <br />
+                <small>balance: {asset.assetAmount.toString()}</small>
               </Box>
             </HStack>
             <HStack mt={2} spacing={2}>
