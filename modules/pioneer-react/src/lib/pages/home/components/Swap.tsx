@@ -14,6 +14,20 @@ import {
   Avatar,
   HStack,
   Progress,
+  Card,
+  CardHeader,
+  CardBody,
+  Stack,
+  StackDivider,
+  TableContainer,
+  Table,
+  TableCaption,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
 } from "@chakra-ui/react";
 import { QuoteRoute, SwapKitApi } from "@pioneer-platform/swapkit-api";
 import { Chain } from "@pioneer-platform/types";
@@ -107,7 +121,7 @@ const Swap = ({ openModal }) => {
       console.log("routes: ", routes);
       setRoutes(routes || []);
     } catch (e) {
-      console.error("ERROR: ",e);
+      console.error("ERROR: ", e);
       alert("Failed to get quote! " + e.message);
       setLoading(false);
     }
@@ -133,6 +147,105 @@ const Swap = ({ openModal }) => {
             Amount Available: {assetContext?.assetAmount.toString()} (
             {assetContext?.asset?.symbol})
           </Text>
+          {routes &&
+            routes.length > 0 &&
+            routes.map((route, index) => (
+              <Card key={index} mb={5}>
+                <CardHeader>
+                  <Heading size="md">Route: {route.path || "N/A"}</Heading>
+                </CardHeader>
+
+                <CardBody>
+                  <Stack divider={<StackDivider />} spacing="4">
+                    {/* Expected Output */}
+                    {route.expectedOutput && (
+                      <Box>
+                        <Heading size="xs" textTransform="uppercase">
+                          Expected Output
+                        </Heading>
+                        <Text>{route.expectedOutput}</Text>
+                      </Box>
+                    )}
+
+                    {/* Fees */}
+                    {route.fees && route.fees.THOR && (
+                      <Box>
+                        <Heading size="xs" textTransform="uppercase">
+                          Fees
+                        </Heading>
+                        {route.fees.THOR.map((fee, feeIndex) => (
+                          <Text key={feeIndex}>
+                            Type: {fee.type}, Asset: {fee.asset}, Total Fee:{" "}
+                            {fee.totalFeeUSD} USD
+                          </Text>
+                        ))}
+                      </Box>
+                    )}
+
+                    {/* Meta */}
+                    {route.meta && (
+                      <Box>
+                        <Heading size="xs" textTransform="uppercase">
+                          Meta
+                        </Heading>
+                        <Text>Sell Chain: {route.meta.sellChain}</Text>
+                        <Text>Buy Chain: {route.meta.buyChain}</Text>
+                        <Text>
+                          Price Protection Required:{" "}
+                          {route.meta.priceProtectionRequired ? "Yes" : "No"}
+                        </Text>
+                        <Text>Quote Mode: {route.meta.quoteMode}</Text>
+                      </Box>
+                    )}
+
+                    {/* Transaction */}
+                    {route.transaction && route.transaction.inputs && (
+                      <Box>
+                        <Heading size="xs" textTransform="uppercase">
+                          Transaction
+                        </Heading>
+                        <TableContainer>
+                          <Table size="sm">
+                            <Thead>
+                              <Tr>
+                                <Th>Hash</Th>
+                                <Th>Value</Th>
+                                <Th>Address</Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {route.transaction.inputs.map(
+                                (input, inputIndex) => (
+                                  <Tr key={inputIndex}>
+                                    <Td>{input.hash}</Td>
+                                    <Td>{input.value}</Td>
+                                    <Td>{input.address}</Td>
+                                  </Tr>
+                                )
+                              )}
+                            </Tbody>
+                          </Table>
+                        </TableContainer>
+                      </Box>
+                    )}
+
+                    {/* Warnings */}
+                    {route.warnings && (
+                      <Box>
+                        <Heading size="xs" textTransform="uppercase">
+                          Warnings
+                        </Heading>
+                        {route.warnings.map((warning, warningIndex) => (
+                          <Text key={warningIndex}>
+                            {warning.warningMessage}
+                          </Text>
+                        ))}
+                      </Box>
+                    )}
+                  </Stack>
+                </CardBody>
+              </Card>
+            ))}
           <button
             disabled={!assetContext || !outboundAssetContext}
             onClick={fetchQuote}
@@ -235,13 +348,6 @@ const Swap = ({ openModal }) => {
         </div>
       )}
       <Button onClick={onContinue}>{buttonText}</Button>
-      {/*{assetsSelected ? (*/}
-      {/*  <div>*/}
-      {/*    <Button onClick={setAssetsSelected(false)}>Back</Button>*/}
-      {/*  </div>*/}
-      {/*) : (*/}
-      {/*  <div></div>*/}
-      {/*)}*/}
     </VStack>
   );
 };
