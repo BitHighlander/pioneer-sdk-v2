@@ -256,18 +256,22 @@ export const PioneerProvider = ({
       console.log("state.app.blockchainContext: ", state.app.blockchainContext);
       console.log("state.app.context: ", state.app.context);
       if (state && state.app) {
+        //@ts-ignore
         dispatch({
           type: WalletActions.SET_CONTEXT,
           payload: state.app.context,
         });
+        //@ts-ignore
         dispatch({
           type: WalletActions.SET_ASSET_CONTEXT,
           payload: state.app.assetContext,
         });
+        //@ts-ignore
         dispatch({
           type: WalletActions.SET_BLOCKCHAIN_CONTEXT,
           payload: state.app.blockchainContext,
         });
+        //@ts-ignore
         dispatch({
           type: WalletActions.SET_PUBKEY_CONTEXT,
           payload: state.app.pubkeyContext,
@@ -372,18 +376,22 @@ export const PioneerProvider = ({
   useEffect(() => {
     if (state && state.app) {
       //if keepkey available, connect
+      //@ts-ignore
       dispatch({
         type: WalletActions.SET_PUBKEY_CONTEXT,
         payload: state.app.pubkeyContext,
       });
+      //@ts-ignore
       dispatch({
         type: WalletActions.SET_ASSET_CONTEXT,
         payload: state.app.assetContext,
       });
+      //@ts-ignore
       dispatch({
         type: WalletActions.SET_BLOCKCHAIN_CONTEXT,
         payload: state.app.blockchainContext,
       });
+      //@ts-ignore
       dispatch({ type: WalletActions.SET_CONTEXT, payload: state.app.context });
     }
   }, [

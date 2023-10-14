@@ -5,18 +5,18 @@ import ReactDOM from "react-dom/client";
 // fonts
 import "@fontsource/plus-jakarta-sans/latin.css";
 
-import Pioneer from "lib/components/pioneer";
-import { PioneerProvider, usePioneer } from "lib/context/Pioneer";
-import { theme } from "lib/styles/theme";
-import Balances from "lib/components/pioneer/Pioneer/Balances";
-import AssetSelect from "lib/components/AssetSelect";
-import WalletSelect from "lib/components/WalletSelect";
-import BlockchainSelect from "lib/components/AssetSelect";
-import MiddleEllipsis from "lib/components/MiddleEllipsis";
+import Pioneer from "./lib/components/pioneer";
+import { PioneerProvider, usePioneer } from "./lib/context/Pioneer";
+import { theme } from "./lib/styles/theme";
+import Balances from "./lib/components/pioneer/Pioneer/Balances";
+import AssetSelect from "./lib/components/AssetSelect";
+import WalletSelect from "./lib/components/WalletSelect";
+import BlockchainSelect from "./lib/components/AssetSelect";
+import MiddleEllipsis from "./lib/components/MiddleEllipsis";
 
 import App from "./App";
 
-// To publish run as dev uncomment
+// To publish comment, to run as dev, uncomment
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -29,6 +29,13 @@ root.render(
 );
 
 //end dev mode
+
+//types
+export interface PioneerType {
+    test: string;
+    foo: string;
+    bar: boolean;
+}
 
 export {
   Pioneer,

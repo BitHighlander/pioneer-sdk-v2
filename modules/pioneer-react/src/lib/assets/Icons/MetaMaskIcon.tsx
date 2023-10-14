@@ -1,6 +1,6 @@
 import { createIcon } from "@chakra-ui/react";
 
-export const MetaMaskIcon = createIcon({
+export const MetaMaskIcon:any = createIcon({
   displayName: "MetaMaskIcon",
   path: (
     <svg>

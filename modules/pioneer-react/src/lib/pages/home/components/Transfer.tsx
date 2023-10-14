@@ -19,7 +19,7 @@ import {
   AssetAmount,
 } from "@pioneer-platform/swapkit-entities";
 
-const Transfer = ({ openModal }) => {
+const Transfer = ({ openModal }:any) => {
   const toast = useToast();
   const { state } = usePioneer();
   const {
@@ -78,7 +78,7 @@ const Transfer = ({ openModal }) => {
         `${app.swapKit.getExplorerTxUrl(Chain.THORChain, txHash as string)}`,
         "_blank"
       );
-    } catch (e) {
+    } catch (e:any) {
       console.error(e);
       toast({
         title: "Error",

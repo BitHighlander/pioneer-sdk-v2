@@ -4,7 +4,7 @@ import { createIcon } from "@chakra-ui/react";
  *
  * @see https://github.com/chainapsis/keplr-wallet/blob/master/packages/extension/src/public/assets/temp-icon.svg
  */
-export const KeplrIcon = createIcon({
+export const KeplrIcon:any = createIcon({
   displayName: "KeplrIcon",
   path: (
     <svg>

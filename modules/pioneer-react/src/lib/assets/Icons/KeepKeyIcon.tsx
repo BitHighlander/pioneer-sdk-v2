@@ -1,6 +1,6 @@
 import { createIcon } from "@chakra-ui/react";
 
-export const KeepKeyIcon = createIcon({
+export const KeepKeyIcon:any = createIcon({
   displayName: "KeepKeyIcon",
   path: (
     <path

@@ -12,8 +12,8 @@ require("dotenv").config({path:'../../../../.env'})
 const TAG  = " | intergration-test | "
 
 console.log(process.env['BLOCKCHAIR_API_KEY'])
-if(!process.env['BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
-if(!process.env['BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
+if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
+if(!process.env['VITE_BLOCKCHAIR_API_KEY']) throw Error("Failed to load env vars!")
 const log = require("@pioneer-platform/loggerdog")()
 let assert = require('assert')
 let SDK = require('@pioneer-sdk/sdk-v2')

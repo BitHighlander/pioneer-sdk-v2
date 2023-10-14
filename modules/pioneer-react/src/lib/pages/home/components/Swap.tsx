@@ -41,7 +41,7 @@ import {
   AssetAmount,
 } from "@pioneer-platform/swapkit-entities";
 
-const Swap = ({ openModal }) => {
+const Swap = ({ openModal }:any) => {
   const toast = useToast();
   const { state } = usePioneer();
   const {
@@ -113,7 +113,7 @@ const Swap = ({ openModal }) => {
       console.log("entry: ", entry);
       const { routes } = await SwapKitApi.getQuote({
         sellAsset: assetContext.asset.toString(),
-        sellAmount: inputAmount.assetAmount.toString(),
+        sellAmount: inputAmount?.assetAmount.toString() || "0",
         buyAsset: outboundAssetContext.asset.toString(),
         senderAddress,
         recipientAddress,
@@ -121,7 +121,7 @@ const Swap = ({ openModal }) => {
       });
       console.log("routes: ", routes);
       setRoutes(routes || []);
-    } catch (e) {
+    } catch (e:any) {
       console.error("ERROR: ", e);
       alert("Failed to get quote! " + e.message);
       setLoading(false);
@@ -177,7 +177,7 @@ const Swap = ({ openModal }) => {
           </Text>
           {routes &&
             routes.length > 0 &&
-            routes.map((route, index) => (
+            routes.map((route:any, index) => (
               <Card key={index} mb={5}>
                 <CardHeader>
                   <Heading size="md">Route: {route.path || "N/A"}</Heading>
@@ -201,7 +201,7 @@ const Swap = ({ openModal }) => {
                         <Heading size="xs" textTransform="uppercase">
                           Fees
                         </Heading>
-                        {route.fees.THOR.map((fee, feeIndex) => (
+                        {route.fees.THOR.map((fee:any, feeIndex:any) => (
                           <Text key={feeIndex}>
                             Type: {fee.type}, Asset: {fee.asset}, Total Fee:{" "}
                             {fee.totalFeeUSD} USD
@@ -243,7 +243,7 @@ const Swap = ({ openModal }) => {
                             </Thead>
                             <Tbody>
                               {route.transaction.inputs.map(
-                                (input, inputIndex) => (
+                                (input:any, inputIndex:any) => (
                                   <Tr key={inputIndex}>
                                     <Td>{input.hash}</Td>
                                     <Td>{input.value}</Td>
@@ -266,7 +266,7 @@ const Swap = ({ openModal }) => {
                         <Heading size="xs" textTransform="uppercase">
                           Warnings
                         </Heading>
-                        {route?.warnings?.map((warning, warningIndex) => (
+                        {route?.warnings?.map((warning:any, warningIndex:any) => (
                           <Text key={warningIndex}>
                             {warning.warningMessage}
                           </Text>

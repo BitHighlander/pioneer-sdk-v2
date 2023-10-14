@@ -90,7 +90,7 @@ const Home = () => {
             )}
             {modalType === "Select Asset" && (
               <div>
-                <AssetSelect onClose={onClose}></AssetSelect>
+                <AssetSelect onClose={onClose} onlyOwned={true}></AssetSelect>
               </div>
             )}
             {modalType === "Select Blockchain" && (
@@ -105,7 +105,7 @@ const Home = () => {
             )}
             {modalType === "Select Outbound" && (
               <div>
-                <OutputSelect onClose={onClose}></OutputSelect>
+                <OutputSelect onClose={onClose} onlyOwned={false}></OutputSelect>
               </div>
             )}
           </ModalBody>
@@ -129,7 +129,7 @@ const Home = () => {
 
         <TabPanels>
           <TabPanel>
-            <Basic openModal={openModal}></Basic>
+            <Basic></Basic>
           </TabPanel>
           <TabPanel>
             <Balances openModal={openModal}></Balances>

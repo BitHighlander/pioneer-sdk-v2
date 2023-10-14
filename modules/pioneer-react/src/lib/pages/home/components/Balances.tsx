@@ -22,7 +22,7 @@ import {
 import { usePioneer } from "lib/context/Pioneer";
 
 import React, { useState, useEffect } from "react";
-const Balances = ({ openModal }) => {
+const Balances = ({ openModal }:any) => {
   const { state } = usePioneer();
   const {
     api,
@@ -51,7 +51,7 @@ const Balances = ({ openModal }) => {
 
   return (
     <Stack spacing={4}>
-      {balancesLocal.map((balance, index) => (
+      {balancesLocal.map((balance:any, index) => (
         <Card key={index}>
           <CardHeader>
             <Heading size="md">{balance.asset.name}</Heading>

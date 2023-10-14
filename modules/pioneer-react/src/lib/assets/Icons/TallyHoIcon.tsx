@@ -1,6 +1,6 @@
 import { createIcon } from "@chakra-ui/react";
 
-export const TallyHoIcon = createIcon({
+export const TallyHoIcon:any = createIcon({
   displayName: "TallyHoIcon",
   path: (
     <g>

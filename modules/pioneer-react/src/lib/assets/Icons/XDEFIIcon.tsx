@@ -1,6 +1,6 @@
 import { createIcon } from "@chakra-ui/react";
 
-export const XDEFIIcon = createIcon({
+export const XDEFIIcon:any = createIcon({
   displayName: "XDeFiIcon",
   path: (
     <svg

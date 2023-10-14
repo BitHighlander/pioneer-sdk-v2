@@ -160,17 +160,7 @@ const Pioneer = () => {
     console.log("rendering wallets!");
     console.log("rendering wallets!", app?.wallets);
     return walletsAvailable.map(
-      (wallet: {
-        type:
-          | boolean
-          | Key
-          | ReactElement<any, string | JSXElementConstructor<any>>
-          | ReactFragment
-          | null
-          | undefined;
-        icon: string | undefined;
-        isConnected: any;
-      }) => (
+      (wallet: any) => (
         <Card
           key={wallet.type}
           align="center"
