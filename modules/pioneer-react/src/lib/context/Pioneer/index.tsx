@@ -17,9 +17,7 @@
 
 */
 import EventEmitter from "events";
-// @ts-ignore
-// import { SDK } from "../../../../../../modules/sdk/lib";
-import { SDK } from "@pioneer-sdk/sdk-v3";
+import { SDK } from "@pioneer-sdk/sdk-v2";
 
 import {
   createContext,
@@ -344,6 +342,7 @@ export const PioneerProvider = ({
       dispatch({ type: WalletActions.SET_APP, payload: appInit });
 
       //events
+      // @ts-ignore
       const events = appInit.events;
 
       const walletActionsArray = Object.values(WalletActions);
@@ -417,5 +416,11 @@ type ModalProps = {
   onClose: () => void;
 };
 
-export const usePioneer = (): any =>
-  useContext(PioneerContext as unknown as React.Context<IPioneerContext>);
+export interface usePioneerType {
+    state: any;
+    dispatch: any;
+    connectWallet: (wallet: string) => void;
+}
+
+export const usePioneer = ():usePioneerType =>
+  useContext(PioneerContext as any);

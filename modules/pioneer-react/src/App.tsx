@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { ChakraProvider, useColorMode } from "@chakra-ui/react";
-import { PioneerProvider } from "lib/context/Pioneer";
-import Layout from "lib/layout";
-import Routings from "lib/router/Routings";
-import { theme } from "lib/styles/theme";
+import { PioneerProvider } from "./lib/context/Pioneer";
+import Layout from "./lib/layout";
+import Routings from "./lib/router/Routings";
+import { theme } from "./lib/styles/theme";
 
 // @ts-ignore
 const ForceDarkMode = ({ children }) => {
