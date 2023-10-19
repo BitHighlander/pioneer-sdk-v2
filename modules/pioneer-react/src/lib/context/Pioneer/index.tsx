@@ -329,7 +329,24 @@ export const PioneerProvider = ({
         spec,
         wss,
         paths,
+        // @ts-ignore
+        ethplorerApiKey:
+        // @ts-ignore
+            import.meta.env.VITE_ETHPLORER_API_KEY || "EK-xs8Hj-qG4HbLY-LoAu7",
+        // @ts-ignore
+        covalentApiKey:
+        // @ts-ignore
+            import.meta.env.VITE_COVALENT_API_KEY ||
+            "cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q",
+        // @ts-ignore
+        utxoApiKey: import.meta.env.VITE_BLOCKCHAIR_API_KEY,
+        // @ts-ignore
+        walletConnectProjectId:
+        // @ts-ignore
+            import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID ||
+            "18224df5f72924a5f6b3569fbd56ae16",
       };
+      if(!configPioneer.utxoApiKey) throw Error("blockchair api key required!")
       const appInit = new SDK(spec, configPioneer);
       // @ts-ignore
       const api = await appInit.init();

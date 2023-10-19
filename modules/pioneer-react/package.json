@@ -1,12 +1,12 @@
 {
   "name": "@pioneer-sdk/pioneer-react",
-  "version": "0.0.18",
+  "version": "0.0.24",
   "author": "highlander",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "yarn": "yarn",
+    "pnpm": "pnpm i",
     "dev": "vite",
     "build": "tsc && NODE_OPTIONS=--max-old-space-size=32096 vite build",
     "build:turbo": "tsc && NODE_OPTIONS=--max-old-space-size=32096 npx turbo build",
@@ -33,7 +33,7 @@
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@fontsource/plus-jakarta-sans": "^4.5.11",
-    "@pioneer-sdk/sdk-v2": "^0.0.14",
+    "@pioneer-sdk/sdk-v2": "^0.0.19",
     "@types/ramda": "0.28.23",
     "@types/uuid": "^9.0.5",
     "assert": "^2.1.0",

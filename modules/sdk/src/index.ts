@@ -26,6 +26,18 @@ import {shortListNameToCaip,shortListSymbolToCaip,evmCaips, primaryBlockchains, 
 // @ts-ignore
 import * as Events from "@pioneer-platform/pioneer-events";
 
+export interface PioneerSDKConfig {
+    blockchains: any;
+    username: string;
+    queryKey: string;
+    spec: string;
+    wss: string;
+    paths: string;
+    ethplorerApiKey: string;
+    covalentApiKey: string;
+    utxoApiKey: string;
+    walletConnectProjectId: string;
+}
 
 export class SDK {
     private status: string;
@@ -33,6 +45,10 @@ export class SDK {
     private queryKey: string;
     private wss: string;
     private spec: any;
+    private ethplorerApiKey: string;
+    private covalentApiKey: string;
+    private utxoApiKey: string;
+    private walletConnectProjectId: string;
     private context: string;
     private assetContext: any;
     private blockchainContext: any;
@@ -61,12 +77,16 @@ export class SDK {
     // private setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
     private setAssetContext: (asset: any) => Promise<any>;
     private setOutboundAssetContext: (asset: any) => Promise<any>;
-    constructor(spec:string,config:any) {
+    constructor(spec:string,config:PioneerSDKConfig) {
         this.status = 'preInit'
         this.spec = config.spec || 'https://pioneers.dev/spec/swagger'
         this.wss = config.wss || 'wss://pioneers.dev'
-        this.username = config.username // or generate?
-        this.queryKey = config.queryKey // or generate?
+        this.username = config.username
+        this.queryKey = config.queryKey
+        this.ethplorerApiKey = config.ethplorerApiKey;
+        this.covalentApiKey = config.covalentApiKey;
+        this.utxoApiKey = config.utxoApiKey;
+        this.walletConnectProjectId = config.walletConnectProjectId;
         this.paths = [...config.paths, ...getPaths()];
         this.pubkeys = []
         this.balances = []
@@ -89,7 +109,11 @@ export class SDK {
                 if(!this.username) throw Error("username required!")
                 if(!this.queryKey) throw Error("queryKey required!")
                 if(!this.wss) throw Error("wss required!")
-
+                if(!this.ethplorerApiKey) throw Error("ethplorerApiKey required!")
+                if(!this.covalentApiKey) throw Error("covalentApiKey required!")
+                if(!this.utxoApiKey) throw Error("utxoApiKey required!")
+                if(!this.walletConnectProjectId) throw Error("walletConnectProjectId required!")
+                
                 let PioneerClient = new Pioneer(config.spec,config)
                 this.pioneer = await PioneerClient.init()
                 if(!this.pioneer)throw Error("Fialed to init pioneer server!")
@@ -103,10 +127,11 @@ export class SDK {
                 this.swapKit = new SwapKitCore();
 
                 // log.info(tag,"this.swapKit: ",this.swapKit)
-                let ethplorerApiKey = process.env.VITE_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7'
-                let covalentApiKey = process.env.VITE_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q'
-                let utxoApiKey = process.env.VITE_BLOCKCHAIR_API_KEY || 'A___Tcn5B16iC3mMj7QrzZCb2Ho1QBUf'
-                let walletConnectProjectId = process.env.VITE_WALLET_CONNECT_PROJECT_ID || '18224df5f72924a5f6b3569fbd56ae16'
+                let ethplorerApiKey = this.ethplorerApiKey
+                let covalentApiKey = this.covalentApiKey
+                let utxoApiKey = this.utxoApiKey
+                if(!utxoApiKey) throw Error("Unable to get utxoApiKey!")
+                let walletConnectProjectId = this.walletConnectProjectId
                 let stagenet = false
                 let configKit = {
                     config: {

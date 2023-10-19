@@ -1,6 +1,6 @@
 {
   "name": "@pioneer-sdk/sdk-v2",
-  "version": "0.0.14",
+  "version": "0.0.19",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -43,7 +43,9 @@
     "@pioneer-platform/types": "^3.0.1",
     "@pioneer-platform/walletconnect": "^3.0.3",
     "@pioneer-platform/xdefi": "^3.0.1",
+    "build": "^0.1.4",
     "onchange": "^7.1.0",
+    "prettier": "^2.7.1",
     "typescript": "^5.2.2"
   }
 }
