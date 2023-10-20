@@ -288,10 +288,8 @@ export const PioneerProvider = ({
       let username: string | null = localStorage.getItem("username");
       //@ts-ignore
       dispatch({ type: WalletActions.SET_USERNAME, payload: username });
-
       //if auto connecting
       const isOnboarded = localStorage.getItem("userOnboarded");
-      console.log("isOnboarded: ", isOnboarded);
 
       if (!queryKey) {
         queryKey = `key:${uuidv4()}`;
