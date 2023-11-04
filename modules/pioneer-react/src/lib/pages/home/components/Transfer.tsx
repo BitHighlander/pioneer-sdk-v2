@@ -10,14 +10,10 @@ import {
   FormLabel,
   useToast,
 } from "@chakra-ui/react";
-import { Chain } from "@pioneer-platform/types";
+import { Chain } from "@coinmasters/types";
 import { usePioneer } from "lib/context/Pioneer";
 import React, { useState, useCallback } from "react";
-import {
-  Amount,
-  AmountType,
-  AssetAmount,
-} from "@pioneer-platform/swapkit-entities";
+
 
 const Transfer = ({ openModal }:any) => {
   const toast = useToast();
@@ -36,26 +32,26 @@ const Transfer = ({ openModal }:any) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalType, setModalType] = useState("");
   const [inputAmount, setInputAmount] = useState("");
-  const [sendAmount, setSendAmount] = useState<Amount | undefined>();
+  const [sendAmount, setSendAmount] = useState<any | undefined>();
   const [recipient, setRecipient] = useState("");
 
   const handleInputChange = (value: string) => {
     setInputAmount(value);
     if (!assetContext) return;
     const float = parseFloat(value);
-    const amount = new Amount(
-      float,
-      AmountType.ASSET_AMOUNT,
-      assetContext.asset.decimal
-    );
-    setSendAmount(amount);
+    // const amount = new Amount(
+    //   float,
+    //   AmountType.ASSET_AMOUNT,
+    //   assetContext.asset.decimal
+    // );
+    // setSendAmount(amount);
   };
 
   const handleSend = useCallback(async () => {
     if (!assetContext || !inputAmount || !app || !app.swapKit || !sendAmount)
       return;
 
-    const assetAmount = new AssetAmount(assetContext.asset, sendAmount);
+    // const assetAmount = new AssetAmount(assetContext.asset, sendAmount);
 
     if (!recipient) {
       toast({
@@ -69,15 +65,15 @@ const Transfer = ({ openModal }:any) => {
     }
 
     try {
-      const txHash = await app.swapKit.transfer({
-        assetAmount,
-        memo: "",
-        recipient,
-      });
-      window.open(
-        `${app.swapKit.getExplorerTxUrl(Chain.THORChain, txHash as string)}`,
-        "_blank"
-      );
+      // const txHash = await app.swapKit.transfer({
+      //   assetAmount,
+      //   memo: "",
+      //   recipient,
+      // });
+      // window.open(
+      //   `${app.swapKit.getExplorerTxUrl(Chain.THORChain, txHash as string)}`,
+      //   "_blank"
+      // );
     } catch (e:any) {
       console.error(e);
       toast({

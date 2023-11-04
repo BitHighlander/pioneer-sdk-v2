@@ -31,12 +31,14 @@ import BlockchainSelect from "lib/components/BlockchainSelect";
 import WalletSelect from "lib/components/WalletSelect";
 import Basic from "./components/Basic";
 import Balances from "./components/Balances";
+import { useParams } from 'react-router-dom';
 // import Pubkeys from "./components/Pubkeys";
 import Transfer from "./components/Transfer";
-import Swap from "./components/Swap";
+// import Swap from "./components/Swap";
 
 const Home = () => {
-  const { state } = usePioneer();
+  const { state, onStart } = usePioneer();
+  let { txid } = useParams<{ txid?: string }>();
   const {
     api,
     app,
@@ -49,7 +51,19 @@ const Home = () => {
   const [address, setAddress] = useState("");
   const [modalType, setModalType] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [txHash, setTxhash] = useState(null);
+  const [step, setStep] = useState(0);
+  
+  //start the context provider
+  useEffect(() => {
+    if(txid){
+      //set the txid
+      setTxhash(txid);
+      setStep(2);
+    }
+    onStart();
+  }, []);
+  
   useEffect(() => {
     console.log("2 pubkeyContext: ", pubkeyContext);
     if (pubkeyContext)
@@ -138,7 +152,7 @@ const Home = () => {
             <Transfer openModal={openModal}></Transfer>
           </TabPanel>
           <TabPanel>
-            <Swap openModal={openModal}></Swap>
+            {/*<Swap openModal={openModal}></Swap>*/}
           </TabPanel>
           <TabPanel>
             <p>
