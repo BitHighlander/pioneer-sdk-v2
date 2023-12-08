@@ -1,6 +1,6 @@
 {
   "name": "@pioneer-sdk/pioneer-react",
-  "version": "0.0.16",
+  "version": "0.0.30",
   "author": "highlander",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -28,12 +28,14 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.1",
+    "@coinmasters/types": "^1.0.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@ethersproject/abstract-signer": "5.7.0",
     "@fontsource/plus-jakarta-sans": "^4.5.11",
-    "@pioneer-sdk/sdk-v2": "latest",
+    "@pioneer-sdk/sdk": "2.0.7",
     "@types/ramda": "0.28.23",
     "@types/uuid": "^9.0.5",
     "assert": "^2.1.0",

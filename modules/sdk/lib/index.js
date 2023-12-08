@@ -15,7 +15,7 @@ const events_1 = __importDefault(require("events"));
 // @ts-ignore
 const loggerdog_1 = __importDefault(require("@pioneer-platform/loggerdog"));
 const log = (0, loggerdog_1.default)();
-const swapkit_core_1 = require("@pioneer-platform/swapkit-core");
+const core_1 = require("@coinmasters/core");
 const pioneer_coins_1 = require("@pioneer-platform/pioneer-coins");
 const connect_1 = require("./connect");
 const support_1 = require("./support");
@@ -64,7 +64,7 @@ class SDK {
                 this.wallets = walletsVerbose;
                 // log.info("wallets",this.wallets)
                 //init swapkit
-                this.swapKit = new swapkit_core_1.SwapKitCore();
+                this.swapKit = new core_1.SwapKitCore();
                 // log.info(tag,"this.swapKit: ",this.swapKit)
                 let ethplorerApiKey = process.env.VITE_ETHPLORER_API_KEY || 'EK-xs8Hj-qG4HbLY-LoAu7';
                 let covalentApiKey = process.env.VITE_COVALENT_API_KEY || 'cqt_rQ6333MVWCVJFVX3DbCCGMVqRH4q';
@@ -163,7 +163,7 @@ class SDK {
                     let chain = chains[i];
                     let address = addressArray[i];
                     let pubkey = {
-                        context,
+                        context, //TODO this is not right?
                         // wallet:walletSelected.type,
                         symbol: chain,
                         blockchain: pioneer_coins_1.COIN_MAP_LONG[chain] || 'unknown',

@@ -58,6 +58,7 @@ const Home = () => {
   useEffect(() => {
     if(txid){
       //set the txid
+      // @ts-ignore
       setTxhash(txid);
       setStep(2);
     }

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.availableChainsByWallet = void 0;
-const types_1 = require("@pioneer-platform/types");
-//Support Array
+const types_1 = require("@coinmasters/types");
+// Support Array
 const AllChainsSupported = [
     types_1.Chain.Arbitrum,
     types_1.Chain.Avalanche,
@@ -30,12 +30,10 @@ exports.availableChainsByWallet = {
         types_1.Chain.Litecoin,
         types_1.Chain.Dogecoin,
         types_1.Chain.Ethereum,
-        types_1.Chain.Avalanche,
-        types_1.Chain.BinanceSmartChain,
     ],
     [types_1.WalletOption.KEEPKEY]: AllChainsSupported,
     [types_1.WalletOption.METAMASK]: [
-        types_1.Chain.Arbitrum,
+        types_1.Chain.Arbitrum, // Snap has everything but bnb beacon chain, because sillyness
         types_1.Chain.Avalanche,
         types_1.Chain.BinanceSmartChain,
         types_1.Chain.Bitcoin,

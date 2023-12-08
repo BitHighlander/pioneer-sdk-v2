@@ -26,7 +26,7 @@ import {
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { SDK } from '@pioneer-sdk/sdk-v2';
+import { SDK } from '@pioneer-sdk/sdk';
 
 const eventEmitter = new EventEmitter();
 
@@ -342,8 +342,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       if (!configPioneer.utxoApiKey) throw Error('blockchair api key required!');
       const appInit = new SDK(spec, configPioneer);
 
+      // @ts-ignore
       if (appInit.keepkeyApiKey !== keepkeyApiKey)
-        localStorage.setItem('keepkeyApiKey', appInit.keepkeyApiKey);
+        { // @ts-ignore
+          localStorage.setItem('keepkeyApiKey', appInit.keepkeyApiKey);
+        }
 
       // @ts-ignore
       const api = await appInit.init();

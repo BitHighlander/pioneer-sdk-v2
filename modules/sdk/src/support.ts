@@ -1,6 +1,6 @@
-import { Chain, EVMChainList, WalletOption } from '@pioneer-platform/types';
+import { Chain, EVMChainList, WalletOption } from "@coinmasters/types";
 
-//Support Array
+// Support Array
 const AllChainsSupported = [
     Chain.Arbitrum,
     Chain.Avalanche,
@@ -29,12 +29,10 @@ export const availableChainsByWallet: any = {
         Chain.Litecoin,
         Chain.Dogecoin,
         Chain.Ethereum,
-        Chain.Avalanche,
-        Chain.BinanceSmartChain,
     ],
     [WalletOption.KEEPKEY]: AllChainsSupported,
     [WalletOption.METAMASK]: [
-        Chain.Arbitrum, //Snap has everything but bnb beacon chain, because sillyness
+        Chain.Arbitrum, // Snap has everything but bnb beacon chain, because sillyness
         Chain.Avalanche,
         Chain.BinanceSmartChain,
         Chain.Bitcoin,

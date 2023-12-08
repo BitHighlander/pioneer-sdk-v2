@@ -98,14 +98,13 @@ const HeaderNew = () => {
           alignItems="center"
           alignSelf="flex-start"
           as="header"
-          bg="black"
           gridGap={2}
           justifyContent="space-between"
           p={5}
           width="full"
       >
         {state.app && state.app.wallets && (
-            <Drawer bg="black" isOpen={isOpen} onClose={handleClose} placement="right">
+            <Drawer isOpen={isOpen} onClose={handleClose} placement="right">
               <DrawerOverlay>
                 <DrawerContent bg="black" border="2px solid white">
                   <DrawerCloseButton onClick={() => setIsOpen(false)} />

@@ -10,8 +10,8 @@ import EventEmitter from "events";
 import loggerdog from "@pioneer-platform/loggerdog";
 const log = loggerdog();
 // @ts-ignore
-import { Chain, EVMChainList, WalletOption } from "@pioneer-platform/types";
-import { SwapKitCore } from '@pioneer-platform/swapkit-core';
+import { Chain, EVMChainList, WalletOption } from "@coinmasters/types";
+import { SwapKitCore } from '@coinmasters/core';
 import {
     getPaths,
     COIN_MAP_LONG,
