@@ -21,19 +21,19 @@ import WalletSelect from "./lib/components/WalletSelect";
 import BlockchainSelect from "./lib/components/AssetSelect";
 import MiddleEllipsis from "./lib/components/MiddleEllipsis";
 
-// import App from "./App";
+import App from "./App";
 
-// To publish comment, to run as dev, uncomment
+//To publish comment, to run as dev, uncomment
 
-// const root = ReactDOM.createRoot(
-//   document.getElementById("root") as HTMLElement
-// );
-// root.render(
-//   <>
-//     <ColorModeScript initialColorMode={theme.config?.initialColorMode} />
-//     <App />
-//   </>
-// );
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+root.render(
+  <>
+    <ColorModeScript initialColorMode={theme.config?.initialColorMode} />
+    <App />
+  </>
+);
 
 //end dev mode
 

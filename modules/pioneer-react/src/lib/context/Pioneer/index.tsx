@@ -388,6 +388,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   // @eslint-ignore
   const onStart = async function (wallets: any, setup: any) {
     try {
+      console.log('onStart: ', wallets);
+      console.log('setup: ', setup);
       // const serviceKey: string | null = localStorage.getItem("serviceKey"); // KeepKey api key
       let queryKey: string | null = localStorage.getItem('queryKey');
       let username: string | null = localStorage.getItem('username');

@@ -6,7 +6,7 @@
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "yarn": "yarn",
+    "pnpm": "pnpm i",
     "dev": "vite",
     "build": "tsc && NODE_OPTIONS=--max-old-space-size=32096 vite build",
     "build:turbo": "tsc && NODE_OPTIONS=--max-old-space-size=32096 npx turbo build",
@@ -28,7 +28,7 @@
     "@chakra-ui/react": "^2.8.1",
     "@coinmasters/core": "^4.0.2",
     "@coinmasters/tokens": "^3.0.1",
-    "@coinmasters/types": "^1.0.0",
+    "@coinmasters/types": "^4.0.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",

@@ -34,7 +34,7 @@ import Pubkeys from '../../components/Pubkeys';
 import Swap from '../../components/Swap';
 import Transfer from '../../components/Transfer';
 import { usePioneer } from '../../context/Pioneer';
-
+import { initWallets } from "./setup";
 const Home = () => {
   const { state, onStart } = usePioneer();
   const { pubkeyContext, balances } = state;
