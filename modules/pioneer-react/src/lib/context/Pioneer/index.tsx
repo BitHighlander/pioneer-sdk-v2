@@ -430,8 +430,8 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       console.log('spec: ', spec);
       const wss = 'wss://pioneers.dev';
       const configPioneer: any = {
-        appName:setup.appName,
-        appIcon:setup.appIcon,
+        appName:setup?.appName || null,
+        appIcon:setup?.appIcon || null,
         blockchains,
         username,
         queryKey,

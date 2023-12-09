@@ -42,6 +42,11 @@ const Home = () => {
   const [modalType, setModalType] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // start the context provider
+  useEffect(() => {
+    initWallets(onStart);
+  }, []);
+  
   useEffect(() => {
     if (pubkeyContext) setAddress(pubkeyContext?.master || pubkeyContext?.pubkey || pubkeyContext);
   }, [pubkeyContext]);
