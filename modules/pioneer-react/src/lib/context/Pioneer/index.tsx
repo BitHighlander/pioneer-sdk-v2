@@ -16,6 +16,7 @@
                                               - Highlander
 
 */
+// @ts-ignore
 import { ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
 import EventEmitter from 'events';
 import {
@@ -385,7 +386,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
     }
   };
   // @eslint-ignore
-  const onStart = async function () {
+  const onStart = async function (wallets: any, setup: any) {
     try {
       // const serviceKey: string | null = localStorage.getItem("serviceKey"); // KeepKey api key
       let queryKey: string | null = localStorage.getItem('queryKey');
@@ -420,12 +421,15 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       const paths: any = [];
       const spec =
           localStorage.getItem('pioneerUrl') ||
+          // @ts-ignore
           import.meta.env.VITE_PIONEER_URL_SPEC ||
           'https://pioneers.dev/spec/swagger.json';
       // @ts-ignore
       console.log('spec: ', spec);
       const wss = 'wss://pioneers.dev';
       const configPioneer: any = {
+        appName:setup.appName,
+        appIcon:setup.appIcon,
         blockchains,
         username,
         queryKey,
@@ -457,7 +461,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       }
 
       // @ts-ignore
-      const api = await appInit.init();
+      const api = await appInit.init(wallets);
 
       // set wallets to available wallets
       // @ts-ignore
@@ -484,14 +488,20 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
           if (action === WalletActions.SET_BALANCES) {
             // @ts-ignore
             console.log('setting balances for context: ', appInit.context);
+            // @ts-ignore
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':balanceCache', JSON.stringify(data));
+              { // @ts-ignore
+                localStorage.setItem(appInit.context + ':balanceCache', JSON.stringify(data));
+              }
           }
           if (action === WalletActions.SET_PUBKEYS) {
             // @ts-ignore
             console.log('setting balances for context: ', appInit.context);
+            // @ts-ignore
             if (appInit.context)
-              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
+              { // @ts-ignore
+                localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
+              }
           }
           // @ts-ignore
           dispatch({

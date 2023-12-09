@@ -31,8 +31,6 @@ import { usePioneer } from "../../context/Pioneer";
 
 // import backgroundImage from "lib/assets/background/thorfox.webp"; // Adjust the path
 // import ForkMeBanner from "lib/components/ForkMe";
-import HistoryPage from "./history";
-import PortfolioPage from "./portfolio";
 import BeginSwap from "./steps/BeginSwap"; // Updated import here
 import CompleteSwap from "./steps/CompleteSwap"; // Updated import here
 import SelectAssets from "./steps/SelectAssets";

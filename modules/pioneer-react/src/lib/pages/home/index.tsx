@@ -117,16 +117,16 @@ const Home = () => {
               <Basic />
             </TabPanel>
             <TabPanel>
-              <Blockchains />
+              <Blockchains onClose={onClose}/>
             </TabPanel>
             <TabPanel>
-              <Paths />
+              <Paths onClose={onClose}/>
             </TabPanel>
             <TabPanel>
-              <Pubkeys />
+              <Pubkeys onClose={onClose}/>
             </TabPanel>
             <TabPanel>
-              <Balances onSelect={onSelect} />
+              <Balances />
             </TabPanel>
             <TabPanel>
               <Transfer openModal={openModal} />

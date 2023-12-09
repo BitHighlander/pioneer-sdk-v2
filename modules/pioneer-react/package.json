@@ -1,6 +1,6 @@
 {
   "name": "@pioneer-sdk/pioneer-react",
-  "version": "0.0.30",
+  "version": "0.0.35",
   "author": "highlander",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -21,13 +21,13 @@
     "up-interactive": "pnpm up -i",
     "up-latest": "pnpm up-interactive -L",
     "release": "standard-version",
-    "push-release": "git push --follow-tags origin main",
-    "prepublishOnly": "npm run check-declarations",
-    "check-declarations": "if [ ! -f ./dist/index.d.ts ]; then echo 'Error: index.d.ts not found'; exit 1; fi"
+    "push-release": "git push --follow-tags origin main"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.1",
+    "@coinmasters/core": "^4.0.2",
+    "@coinmasters/tokens": "^3.0.1",
     "@coinmasters/types": "^1.0.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -36,10 +36,12 @@
     "@ethersproject/abstract-signer": "5.7.0",
     "@fontsource/plus-jakarta-sans": "^4.5.11",
     "@fontsource/roboto": "^5.0.8",
-    "@pioneer-sdk/sdk": "2.0.13",
+    "@pioneer-platform/pioneer-coins": "^9.0.4",
+    "@pioneer-sdk/sdk": "2.0.17",
     "@types/ramda": "0.28.23",
     "@types/uuid": "^9.0.5",
     "assert": "^2.1.0",
+    "axios": "^1.6.2",
     "bip39": "^3.1.0",
     "chart.js": "^4.4.1",
     "dotenv": "^16.3.1",

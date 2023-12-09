@@ -28,12 +28,12 @@ export default function Path({ onClose, pubkey }: any) {
           </Tr>
         </Thead>
         <Tbody>
-          {Object.entries(data).map(([key, value]) => (
-            <Tr key={key}>
-              <Td>{key}</Td>
-              <Td>{value}</Td>
-            </Tr>
-          ))}
+          {/*{Object.entries(data).map(([key, value]) => (*/}
+          {/*  <Tr key={key}>*/}
+          {/*    <Td>{key}</Td>*/}
+          {/*    <Td>{value}</Td>*/}
+          {/*  </Tr>*/}
+          {/*))}*/}
         </Tbody>
       </Table>
     </Stack>

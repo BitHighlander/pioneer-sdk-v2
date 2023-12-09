@@ -19,17 +19,18 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import { AssetValue } from '@coinmasters/core';
+// @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import { usePioneer } from '../../context/Pioneer';
 
-const Earn = ({ openModal }) => {
+const Earn = () => {
   const toast = useToast();
   const { state, connectWallet } = usePioneer();
   const { app, assetContext, balances, context } = state;
   const [isPairing, setIsPairing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pools, setPools] = useState([]);
-  const [selectedPool, setSelectedPool] = useState(null);
+  const [selectedPool, setSelectedPool] = useState<any>(null);
   const [inputAmount, setInputAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [walletType, setWalletType] = useState('');
@@ -54,14 +55,14 @@ const Earn = ({ openModal }) => {
   //   fetchPools();
   // }, [app, app?.pioneer]);
 
-  const selectPool = (pool) => {
+  const selectPool = (pool: any) => {
     setSelectedPool(pool);
     // Set recipient to pool's address (or other relevant identifier)
     setRecipient(pool.address);
   };
 
   const renderPools = () => {
-    return pools.map((pool, index) => {
+    return pools.map((pool: any, index) => {
       const isAvailable = pool.status === 'available';
       const avatarUrl = COIN_MAP_LONG[pool.asset.split('.')[0]];
       return (
@@ -72,7 +73,7 @@ const Earn = ({ openModal }) => {
           </Flex>
           <Stat mt={2}>
             <StatLabel>APY</StatLabel>
-            <StatNumber color="green.500">{parseFloat(pool.poolAPY).toFixed(2)}%</StatNumber>
+            <StatNumber color="green.500">{parseFloat(pool?.poolAPY).toFixed(2)}%</StatNumber>
           </Stat>
           <Badge colorScheme={isAvailable ? 'green' : 'red'}>{isAvailable ? 'Available' : 'Locked'}</Badge>
           <Button mt={3} colorScheme="blue" isDisabled={!isAvailable} onClick={() => selectPool(pool)}>
@@ -104,7 +105,7 @@ const Earn = ({ openModal }) => {
   return (
     <VStack align="start" borderRadius="md" p={6} spacing={5}>
       <Heading as="h1" mb={4} size="lg">
-        {selectedPool ? `Savers Vault ${selectedPool.asset}` : 'Select a Pool'}
+        {selectedPool ? `Savers Vault ${selectedPool?.asset}` : 'Select a Pool'}
       </Heading>
 
       {!selectedPool ? (
@@ -125,7 +126,7 @@ const Earn = ({ openModal }) => {
               <Button
                 colorScheme="blue"
                 isDisabled={!balances}
-                onClick={() => openModal('Select Asset')}
+                // onClick={() => openModal('Select Asset')}
               >
                 Change Pool
               </Button>

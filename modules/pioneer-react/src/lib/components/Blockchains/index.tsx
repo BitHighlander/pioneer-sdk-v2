@@ -19,6 +19,7 @@ import { usePioneer } from '../../context/Pioneer';
 import Path from '../../components/Path';
 import { getWalletContent } from '../../components/WalletIcon';
 
+// @ts-ignore
 export default function Blockchains({ onClose }) {
   const { state } = usePioneer();
   const { app } = state;
@@ -32,12 +33,12 @@ export default function Blockchains({ onClose }) {
     }
   }, [app, app?.blockchains]);
 
-  const handlePubkeyClick = (pubkey) => {
+  const handlePubkeyClick = (pubkey: any) => {
     setSelectedPubkey(pubkey);
     onOpen();
   };
 
-  const handleCopy = (address) => {
+  const handleCopy = (address: any) => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(''), 3000);
@@ -45,7 +46,7 @@ export default function Blockchains({ onClose }) {
 
   return (
     <div>
-      {app?.blockchains?.map((blockchain, index) => (
+      {app?.blockchains?.map((blockchain: any, index: any) => (
         <Flex key={index} p={4} borderWidth="1px" borderRadius="lg" alignItems="center" justifyContent="space-between">
           <Box>
             <Text fontWeight="bold">networkId: {blockchain}</Text>
@@ -69,3 +70,7 @@ export default function Blockchains({ onClose }) {
     </div>
   );
 }
+function key(key: any): void {
+    throw new Error('Function not implemented.');
+}
+

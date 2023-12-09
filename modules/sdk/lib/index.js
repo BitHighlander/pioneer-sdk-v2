@@ -25,10 +25,6 @@ const pioneer_coins_1 = require("@pioneer-platform/pioneer-coins");
 const events_1 = __importDefault(require("events"));
 // @ts-ignore
 // @ts-ignore
-const connect_1 = require("./connect");
-const support_1 = require("./support");
-// @ts-ignore
-// @ts-ignore
 // @ts-ignore
 const TAG = ' | Pioneer-sdk | ';
 class SDK {
@@ -63,7 +59,7 @@ class SDK {
         this.wallets = [];
         this.events = new events_1.default();
         // @ts-ignore
-        this.init = async function () {
+        this.init = async function (walletsVerbose) {
             const tag = `${TAG} | init | `;
             try {
                 if (!this.username)
@@ -72,6 +68,8 @@ class SDK {
                     throw Error('queryKey required!');
                 if (!this.wss)
                     throw Error('wss required!');
+                if (!this.wallets)
+                    throw Error('wallets required!');
                 if (!this.ethplorerApiKey)
                     throw Error('ethplorerApiKey required!');
                 if (!this.covalentApiKey)
@@ -84,9 +82,14 @@ class SDK {
                 this.pioneer = await PioneerClient.init();
                 if (!this.pioneer)
                     throw Error('Fialed to init pioneer server!');
-                // init wallets
-                const { wallets, walletsVerbose } = await (0, connect_1.initializeWallets)();
+                //this.wallets = walletsVerbose
                 this.wallets = walletsVerbose;
+                let walletArray = [];
+                for (let i = 0; i < this.wallets.length; i++) {
+                    let walletVerbose = this.wallets[i];
+                    let wallet = walletVerbose.wallet;
+                    walletArray.push(wallet);
+                }
                 // log.info("wallets",this.wallets)
                 // init swapkit
                 this.swapKit = new core_1.SwapKitCore();
@@ -115,7 +118,7 @@ class SDK {
                             },
                         },
                     },
-                    wallets,
+                    wallets: walletArray,
                 };
                 // log.info(tag, "configKit: ", configKit);
                 await this.swapKit.extend(configKit);
@@ -188,7 +191,7 @@ class SDK {
                 // log.info(tag,"walletSelected: ",walletSelected)
                 console.log(tag, 'wallet: ', wallet);
                 // supported chains
-                const AllChainsSupported = support_1.availableChainsByWallet[wallet];
+                const AllChainsSupported = types_1.availableChainsByWallet[wallet];
                 console.log(tag, 'ChainToNetworkId: ', types_1.ChainToNetworkId);
                 console.log(tag, 'ChainToNetworkId: ', types_1.ChainToNetworkId[types_1.Chain.Ethereum]);
                 let allByCaip = AllChainsSupported.map(

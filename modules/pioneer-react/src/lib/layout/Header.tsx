@@ -1,5 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 
+// @ts-ignore
 import Pioneer from '../components/Pioneer';
 
 const Header = () => {

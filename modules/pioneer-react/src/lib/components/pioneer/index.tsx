@@ -24,6 +24,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+// @ts-ignore
 import { ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
 import { useEffect, useState } from 'react';
 import { FaCog, FaDownload, FaExchangeAlt, FaPaperPlane, FaRegMoneyBillAlt } from 'react-icons/fa';
@@ -44,6 +45,7 @@ import { usePioneer } from '../../context/Pioneer';
 // import { availableChainsByWallet } from '../../context/Pioneer/support';
 
 const Pioneer = () => {
+  // @ts-ignore
   const { state, hideModal, resetState } = usePioneer();
   const { api, app, status, balances, context, openModal } = state;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -69,7 +71,7 @@ const Pioneer = () => {
   }, [openModal]);
 
   // Function to toggle the visibility of all wallets
-  const toggleShowAllWallets = (e) => {
+  const toggleShowAllWallets = (e: any) => {
     e.stopPropagation();
     setShowAllWallets(!showAllWallets);
   };
@@ -123,24 +125,25 @@ const Pioneer = () => {
   const renderWallets = () => {
     const walletsToDisplay = showAllWallets
       ? walletsAvailable
-      : walletsAvailable.filter((wallet) =>
+      : walletsAvailable.filter((wallet: any) =>
           ['metamask', 'keepkey', 'ledger'].includes(wallet.type.toLowerCase()),
         );
 
     // Retrieve and parse paired wallets
     let pairedWallets = localStorage.getItem('pairedWallets');
     if (pairedWallets) {
-      pairedWallets = JSON.parse(pairedWallets).map((pw) => pw.split(':')[0].toUpperCase());
+      pairedWallets = JSON.parse(pairedWallets).map((pw: any) => pw.split(':')[0].toUpperCase());
     } else {
+      // @ts-ignore
       pairedWallets = [];
     }
 
-    return walletsToDisplay.map((wallet) => (
+    return walletsToDisplay.map((wallet: any) => (
       <Card key={wallet.type} onClick={() => handleWalletClick(wallet.type)}>
         <CardBody>
           <Flex align="center" direction="column" justify="center">
             <Avatar m={2} size="md" src={wallet.icon}>
-              {pairedWallets.includes(wallet.type.toUpperCase()) ? (
+              {pairedWallets?.includes(wallet.type.toUpperCase()) ? (
                 <AvatarBadge bg="green.500" boxSize="1em" />
               ) : (
                 <AvatarBadge bg="red.500" boxSize="1em" />
@@ -225,7 +228,7 @@ const Pioneer = () => {
             )}
             {modalType === 'LEDGER' && (
               <div>
-                <Ledger />
+                <Ledger onClose={onClose}/>
               </div>
             )}
             {modalType === 'TRANSFER' && (

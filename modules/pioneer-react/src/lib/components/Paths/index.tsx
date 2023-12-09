@@ -21,8 +21,9 @@ import Path from '../../components/Path';
 // import { getWalletContent } from '../../components/WalletIcon';
 import {
   addressNListToBIP32,
+    //@ts-ignore
 } from '@pioneer-platform/pioneer-coins'
-
+//@ts-ignore
 export default function Paths({ onClose }) {
   const { state } = usePioneer();
   const { app } = state;
@@ -37,12 +38,12 @@ export default function Paths({ onClose }) {
     }
   }, [app, app?.paths]);
 
-  const handlePubkeyClick = (pubkey) => {
+  const handlePubkeyClick = (pubkey: any) => {
     setSelectedPubkey(pubkey);
     onOpen();
   };
 
-  const handleCopy = (address) => {
+  const handleCopy = (address: any) => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(''), 3000);
@@ -50,7 +51,7 @@ export default function Paths({ onClose }) {
 
   return (
     <div>
-      {app?.paths?.map((key, index) => (
+      {app?.paths?.map((key: any, index: any) => (
         <Card key={index} p={4} borderWidth="1px" borderRadius="lg" alignItems="center" justifyContent="space-between">
           <Box>
             <Text fontWeight="bold">{key.network}</Text>

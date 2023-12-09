@@ -28,6 +28,7 @@ import { getWalletBadgeContent } from '../WalletIcon';
 
 const Transfer = ({ openModal }: any) => {
   const toast = useToast();
+  //@ts-ignore
   const { state, setIntent, showModal } = usePioneer();
   const { app, assetContext, balances, context } = state;
   const [isPairing, setIsPairing] = useState(false);

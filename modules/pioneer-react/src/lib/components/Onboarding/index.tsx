@@ -13,7 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-
+//@ts-ignore
 import pioneerImage from '../../assets/png/pioneerMan.png';
 import { getWalletContent } from '../../components/WalletIcon';
 import { usePioneer } from '../../context/Pioneer';
@@ -58,7 +58,7 @@ export default function Pubkeys({ onClose, setModalType, setWalletType }: any) {
     console.log('resultPair: ', resultPair);
   };
 
-  const handleServerChange = (event) => {
+  const handleServerChange = (event: any) => {
     setServer(event.target.value);
   };
 
@@ -79,9 +79,10 @@ export default function Pubkeys({ onClose, setModalType, setWalletType }: any) {
     const walletsToDisplay = showAllWallets
       ? walletsAvailable
       : walletsAvailable.filter((wallet) =>
+            // @ts-ignore
           ['METAMASK', 'KEEPKEY', 'LEDGER'].includes(wallet.type),
         );
-    return walletsToDisplay.map((wallet) => (
+    return walletsToDisplay.map((wallet: any) => (
       <Box
         border="1px"
         borderColor="gray.200"

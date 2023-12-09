@@ -75,6 +75,7 @@ export default defineConfig(({}) => {
     build: {
       outDir: "dist",
       minify: false,
+      sourcemap: false,
       lib: {
         entry: resolve(__dirname, "src/lib/index.tsx"), // Set the entry file of your library
         name: "PioneerLib", // Set the name of your library

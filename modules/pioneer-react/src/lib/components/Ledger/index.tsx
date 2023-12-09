@@ -13,12 +13,14 @@ import {
   VStack,
 } from '@chakra-ui/react';
 // import { ChainToNetworkId, NetworkIdToChain, getChainEnumValue } from '@coinmasters/types';
+// @ts-ignore
 import { THORCHAIN_NETWORKS } from '@pioneer-platform/pioneer-coins';
 import { useEffect, useState } from 'react';
 
 import { usePioneer } from '../../context/Pioneer';
-
+// @ts-ignore
 export default function Ledger({ onClose }) {
+  // @ts-ignore
   const { state, connectWallet, clearHardwareError, hideModal } = usePioneer();
   const { app, intent, hardwareError } = state;
   const [webUsbSupported, setWebUsbSupported] = useState(true);
@@ -79,9 +81,9 @@ export default function Ledger({ onClose }) {
 
   useEffect(() => {
     if (app?.blockchains) {
-      let allChains = app.blockchains.map((blockchain) => {
-        let pubkeysForChain = app.pubkeys.filter((pubkey) => pubkey.networkId === blockchain);
-        let balancesForChain = app.balances.filter((balance) => balance.networkId === blockchain);
+      let allChains = app.blockchains.map((blockchain: any) => {
+        let pubkeysForChain = app.pubkeys.filter((pubkey: any) => pubkey.networkId === blockchain);
+        let balancesForChain = app.balances.filter((balance: any) => balance.networkId === blockchain);
         let status = pubkeysForChain.length > 0 ? 'connected' : 'disconnected';
 
         return {
@@ -93,11 +95,11 @@ export default function Ledger({ onClose }) {
       });
 
       if (intentBlockchain) {
-        allChains = allChains.filter((chain) => chain.blockchain === intentBlockchain);
+        allChains = allChains.filter((chain: any) => chain.blockchain === intentBlockchain);
       }
 
       const sortedAndGroupedChains = groupEIP155Chains(
-        allChains.sort((a) => (a.status === 'connected' ? 1 : -1)),
+        allChains.sort((a: any) => (a.status === 'connected' ? 1 : -1)),
       );
 
       setConnectedChains(sortedAndGroupedChains);
@@ -139,7 +141,7 @@ export default function Ledger({ onClose }) {
     setWebUsbSupported('usb' in navigator);
   }, []);
 
-  const toggleHideChain = (chain) => {
+  const toggleHideChain = (chain: any) => {
     setHiddenChains((prev) => {
       const newHiddenChains = new Set(prev);
       if (newHiddenChains.has(chain)) {
@@ -151,7 +153,7 @@ export default function Ledger({ onClose }) {
     });
   };
 
-  const attemptConnect = async (blockchain) => {
+  const attemptConnect = async (blockchain: any) => {
     try {
       // const result = await connectWallet('LEDGER', NetworkIdToChain[blockchain]);
       // if (result && result.error) {
@@ -177,10 +179,10 @@ export default function Ledger({ onClose }) {
     }
   };
 
-  const renderChainCard = (chainInfo) => {
+  const renderChainCard = (chainInfo: any) => {
     // const blockchainSymbol = NetworkIdToChain[chainInfo.blockchain];
     const blockchainSymbol = "BTC"
-    const chainAvatar = THORCHAIN_NETWORKS.find((chain) => chain.symbol === blockchainSymbol)
+    const chainAvatar = THORCHAIN_NETWORKS.find((chain: any) => chain.symbol === blockchainSymbol)
       ?.image;
     const isConnected = chainInfo.status === 'connected';
     const isHidden = hiddenChains.has(chainInfo.blockchain);
@@ -213,16 +215,16 @@ export default function Ledger({ onClose }) {
   };
 
   // Grouping EIP155 chains
-  const groupEIP155Chains = (chains) => {
-    let eip155Chains = chains.filter((chain) => chain.blockchain.startsWith('eip155'));
-    let otherChains = chains.filter((chain) => !chain.blockchain.startsWith('eip155'));
+  const groupEIP155Chains = (chains: any) => {
+    let eip155Chains = chains.filter((chain: any) => chain.blockchain.startsWith('eip155'));
+    let otherChains = chains.filter((chain: any) => !chain.blockchain.startsWith('eip155'));
 
     // Group EIP155 chains together
     if (eip155Chains.length > 0) {
       otherChains.push({
         blockchain: 'EVMs',
-        pubkeys: eip155Chains.flatMap((chain) => chain.pubkeys),
-        status: eip155Chains.some((chain) => chain.status === 'connected')
+        pubkeys: eip155Chains.flatMap((chain: any) => chain.pubkeys),
+        status: eip155Chains.some((chain: any) => chain.status === 'connected')
           ? 'connected'
           : 'disconnected',
       });
