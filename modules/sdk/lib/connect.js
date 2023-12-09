@@ -39,12 +39,12 @@ async function initializeWallets() {
     const { keystoreWallet } = await Promise.resolve().then(() => __importStar(require('@coinmasters/wallet-keystore')));
     const { metamaskWallet } = await Promise.resolve().then(() => __importStar(require('@coinmasters/wallet-metamask')));
     // @ts-ignore
-    const { ledgerWallet } = await Promise.resolve().then(() => __importStar(require('@coinmasters/wallet-ledger')));
+    // const { ledgerWallet } = await import('@coinmasters/wallet-ledger');
     const { okxWallet } = await Promise.resolve().then(() => __importStar(require('@coinmasters/wallet-okx')));
     // @ts-ignore
     const { trezorWallet } = await Promise.resolve().then(() => __importStar(require('@coinmasters/wallet-trezor')));
     // @ts-ignore
-    const { walletconnectWallet } = await Promise.resolve().then(() => __importStar(require('@coinmasters/wallet-wc')));
+    // const { walletconnectWallet } = await import('@coinmasters/wallet-wc');
     // @ts-ignore
     const { xdefiWallet } = await Promise.resolve().then(() => __importStar(require('@coinmasters/wallet-xdefi')));
     // Initialize and push each wallet into the wallets array
@@ -98,16 +98,16 @@ async function initializeWallets() {
     };
     wallets.push(keystoreWallet);
     walletsVerbose.push(walletKeystore);
-    const walletLedger = {
-        type: types_1.WalletOption.LEDGER,
-        icon: 'https://pioneers.dev/coins/ledger.png',
-        chains: support_1.availableChainsByWallet[types_1.WalletOption.LEDGER],
-        wallet: ledgerWallet,
-        status: 'offline',
-        isConnected: false,
-    };
-    wallets.push(ledgerWallet);
-    walletsVerbose.push(walletLedger);
+    // const walletLedger = {
+    //     type: WalletOption.LEDGER,
+    //     icon: 'https://pioneers.dev/coins/ledger.png',
+    //     chains: availableChainsByWallet[WalletOption.LEDGER],
+    //     wallet: ledgerWallet,
+    //     status: 'offline',
+    //     isConnected: false,
+    // };
+    // wallets.push(ledgerWallet);
+    // walletsVerbose.push(walletLedger);
     const walletOKX = {
         type: types_1.WalletOption.OKX,
         icon: 'https://pioneers.dev/coins/okx.png',
@@ -128,16 +128,16 @@ async function initializeWallets() {
     };
     wallets.push(trezorWallet);
     walletsVerbose.push(walletTrezor);
-    const walletWalletConnect = {
-        type: types_1.WalletOption.WALLETCONNECT,
-        icon: 'https://pioneers.dev/coins/walletconnect.png',
-        chains: support_1.availableChainsByWallet[types_1.WalletOption.WALLETCONNECT],
-        wallet: walletconnectWallet,
-        status: 'offline',
-        isConnected: false,
-    };
-    wallets.push(walletconnectWallet);
-    walletsVerbose.push(walletWalletConnect);
+    // const walletWalletConnect = {
+    //     type: WalletOption.WALLETCONNECT,
+    //     icon: 'https://pioneers.dev/coins/walletconnect.png',
+    //     chains: availableChainsByWallet[WalletOption.WALLETCONNECT],
+    //     wallet: walletconnectWallet,
+    //     status: 'offline',
+    //     isConnected: false,
+    // };
+    // wallets.push(walletconnectWallet);
+    // walletsVerbose.push(walletWalletConnect);
     const walletXDefi = {
         type: types_1.WalletOption.XDEFI,
         icon: 'https://pioneers.dev/coins/xdefi.png',

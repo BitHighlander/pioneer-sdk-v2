@@ -35,7 +35,7 @@
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@ethersproject/abstract-signer": "5.7.0",
     "@fontsource/plus-jakarta-sans": "^4.5.11",
-    "@pioneer-sdk/sdk": "2.0.7",
+    "@pioneer-sdk/sdk": "2.0.12",
     "@types/ramda": "0.28.23",
     "@types/uuid": "^9.0.5",
     "assert": "^2.1.0",

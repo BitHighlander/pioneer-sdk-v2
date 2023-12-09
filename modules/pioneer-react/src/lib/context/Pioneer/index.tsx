@@ -25,7 +25,7 @@ import {
   // useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-
+//@ts-ignore
 import { SDK } from '@pioneer-sdk/sdk';
 
 const eventEmitter = new EventEmitter();

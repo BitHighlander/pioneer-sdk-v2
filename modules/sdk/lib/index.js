@@ -163,7 +163,7 @@ class SDK {
                     let chain = chains[i];
                     let address = addressArray[i];
                     let pubkey = {
-                        context, //TODO this is not right?
+                        context,
                         // wallet:walletSelected.type,
                         symbol: chain,
                         blockchain: pioneer_coins_1.COIN_MAP_LONG[chain] || 'unknown',

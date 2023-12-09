@@ -22,7 +22,6 @@ export default defineConfig(({}) => {
     plugins: [react()],
     resolve: {
       alias: {
-        "@pioneer-sdk/sdk-v3": resolve("../../modules/sdk/src"),
         lib: resolve(__dirname, "src/lib"),
         routes: resolve(__dirname, "src/routes"),
         util: 'rollup-plugin-node-polyfills/polyfills/util',
