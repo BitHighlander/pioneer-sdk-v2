@@ -1,9 +1,28 @@
+export interface PioneerSDKConfig {
+    appName?: string;
+    appIcon?: string;
+    blockchains: any;
+    username: string;
+    queryKey: string;
+    spec: string;
+    wss: string;
+    paths: any;
+    keepkeyApiKey: string;
+    ethplorerApiKey: string;
+    covalentApiKey: string;
+    utxoApiKey: string;
+    walletConnectProjectId: string;
+}
 export declare class SDK {
     private status;
     private username;
     private queryKey;
     private wss;
     private spec;
+    private ethplorerApiKey;
+    private covalentApiKey;
+    private utxoApiKey;
+    private walletConnectProjectId;
     private context;
     private assetContext;
     private blockchainContext;
@@ -21,9 +40,20 @@ export declare class SDK {
     private events;
     private pairWallet;
     private setContext;
-    private refresh;
+    refresh: () => Promise<any>;
     private setAssetContext;
     private setOutboundAssetContext;
-    constructor(spec: string, config: any);
+    keepkeyApiKey: string;
+    isPioneer: string | null;
+    loadBalanceCache: (balances: any) => Promise<void>;
+    loadPubkeyCache: (pubkeys: any) => Promise<void>;
+    private getPubkeys;
+    private getBalances;
+    private blockchains;
+    private clearWalletState;
+    private setBlockchains;
+    appName: string;
+    private appIcon;
+    constructor(spec: string, config: PioneerSDKConfig);
 }
 export default SDK;

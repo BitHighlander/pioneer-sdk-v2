@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 
 interface MiddleEllipsisProps {
   text: string;
@@ -6,7 +6,7 @@ interface MiddleEllipsisProps {
 
 const MiddleEllipsis: React.FC<MiddleEllipsisProps> = ({ text }) => {
   const maxLength = 20;
-  const ellipsis = "...";
+  const ellipsis = '...';
 
   if (!text || text.length <= maxLength) {
     return <span>{text}</span>;

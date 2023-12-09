@@ -16,6 +16,7 @@
                                               - Highlander
 
 */
+import { ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
 import EventEmitter from 'events';
 import {
   createContext,
@@ -25,8 +26,9 @@ import {
   // useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-//@ts-ignore
+
 import { SDK } from '@pioneer-sdk/sdk';
+// import { availableChainsByWallet } from './support';
 
 const eventEmitter = new EventEmitter();
 
@@ -38,6 +40,7 @@ export enum WalletActions {
   SET_APP = 'SET_APP',
   SET_WALLETS = 'SET_WALLETS',
   SET_CONTEXT = 'SET_CONTEXT',
+  SET_INTENT = 'SET_INTENT',
   SET_ASSET_CONTEXT = 'SET_ASSET_CONTEXT',
   SET_BLOCKCHAIN_CONTEXT = 'SET_BLOCKCHAIN_CONTEXT',
   SET_PUBKEY_CONTEXT = 'SET_PUBKEY_CONTEXT',
@@ -45,18 +48,23 @@ export enum WalletActions {
   SET_OUTBOUND_ASSET_CONTEXT = 'SET_OUTBOUND_ASSET_CONTEXT',
   SET_OUTBOUND_BLOCKCHAIN_CONTEXT = 'SET_OUTBOUND_BLOCKCHAIN_CONTEXT',
   SET_OUTBOUND_PUBKEY_CONTEXT = 'SET_OUTBOUND_PUBKEY_CONTEXT',
+  SET_BLOCKCHAINS = 'SET_BLOCKCHAINS',
   SET_BALANCES = 'SET_BALANCES',
   SET_PUBKEYS = 'SET_PUBKEYS',
+  SET_HARDWARE_ERROR = 'SET_HARDWARE_ERROR',
   ADD_WALLET = 'ADD_WALLET',
   RESET_STATE = 'RESET_STATE',
 }
 
 export interface InitialState {
   status: any;
+  hardwareError: string | null;
+  openModal: string | null;
   username: string;
   serviceKey: string;
   queryKey: string;
   context: string;
+  intent: string;
   assetContext: string;
   blockchainContext: string;
   pubkeyContext: any;
@@ -64,6 +72,7 @@ export interface InitialState {
   outboundAssetContext: any; // Adjusted
   outboundBlockchainContext: any; // Adjusted
   outboundPubkeyContext: any; // Adjusted
+  blockchains: any[]; // Adjusted assuming it's an array
   balances: any[]; // Adjusted assuming it's an array
   pubkeys: any[]; // Adjusted assuming it's an array
   wallets: any[]; // Adjusted assuming it's an array
@@ -75,10 +84,13 @@ export interface InitialState {
 
 const initialState: InitialState = {
   status: 'disconnected',
+  hardwareError: null,
+  openModal: null,
   username: '',
   serviceKey: '',
   queryKey: '',
   context: '',
+  intent: '',
   assetContext: '',
   blockchainContext: '',
   pubkeyContext: '',
@@ -86,6 +98,7 @@ const initialState: InitialState = {
   outboundAssetContext: null,
   outboundBlockchainContext: null,
   outboundPubkeyContext: null,
+  blockchains: [],
   balances: [],
   pubkeys: [],
   wallets: [],
@@ -100,6 +113,7 @@ export interface IPioneerContext {
   username: string | null;
   context: string | null;
   status: string | null;
+  hardwareError: string | null;
   totalValueUsd: number | null;
   assetContext: string | null;
   blockchainContext: string | null;
@@ -129,8 +143,10 @@ export type ActionTypes =
     | { type: WalletActions.SET_STATUS; payload: any }
     | { type: WalletActions.SET_USERNAME; payload: string }
     | { type: WalletActions.OPEN_MODAL; payload: string }
+    | { type: WalletActions.SET_HARDWARE_ERROR; payload: string }
     | { type: WalletActions.SET_APP; payload: any }
     | { type: WalletActions.SET_API; payload: any }
+    | { type: WalletActions.SET_INTENT; payload: any }
     | { type: WalletActions.SET_WALLETS; payload: any }
     | { type: WalletActions.SET_CONTEXT; payload: any }
     | { type: WalletActions.SET_ASSET_CONTEXT; payload: any }
@@ -140,6 +156,7 @@ export type ActionTypes =
     | { type: WalletActions.SET_OUTBOUND_ASSET_CONTEXT; payload: any }
     | { type: WalletActions.SET_OUTBOUND_BLOCKCHAIN_CONTEXT; payload: any }
     | { type: WalletActions.SET_OUTBOUND_PUBKEY_CONTEXT; payload: any }
+    | { type: WalletActions.SET_BLOCKCHAINS; payload: any }
     | { type: WalletActions.SET_BALANCES; payload: any }
     | { type: WalletActions.SET_PUBKEYS; payload: any }
     | { type: WalletActions.ADD_WALLET; payload: any }
@@ -151,12 +168,16 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       eventEmitter.emit('SET_STATUS', action.payload);
       return { ...state, status: action.payload };
 
+    case WalletActions.SET_HARDWARE_ERROR:
+      // eventEmitter.emit("SET_USERNAME", action.payload);
+      return { ...state, hardwareError: action.payload };
+
     case WalletActions.SET_USERNAME:
       // eventEmitter.emit("SET_USERNAME", action.payload);
       return { ...state, username: action.payload };
 
     case WalletActions.OPEN_MODAL:
-      return { ...state, payload: action.payload };
+      return { ...state, openModal: action.payload };
 
     case WalletActions.SET_API:
       return { ...state, api: action.payload };
@@ -166,6 +187,9 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 
     case WalletActions.SET_WALLETS:
       return { ...state, wallets: action.payload };
+
+    case WalletActions.SET_INTENT:
+      return { ...state, intent: action.payload };
 
     case WalletActions.SET_CONTEXT:
       // eventEmitter.emit("SET_CONTEXT", action.payload);
@@ -195,6 +219,9 @@ const reducer = (state: InitialState, action: ActionTypes) => {
     case WalletActions.SET_OUTBOUND_PUBKEY_CONTEXT:
       return { ...state, outboundPubkeyContext: action.payload };
 
+    case WalletActions.SET_BLOCKCHAINS:
+      return { ...state, blockchains: action.payload };
+
     case WalletActions.SET_BALANCES:
       return { ...state, balances: action.payload };
 
@@ -211,8 +238,14 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         user: null,
         username: null,
         context: null,
+        intent: null,
         status: null,
-        // Add other state properties you want to reset here...
+        hardwareError: null,
+        assetContext: null,
+        outboundAssetContext: null,
+        blockchains: [],
+        balances: [],
+        pubkeys: [],
       };
 
     default:
@@ -227,48 +260,124 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   const [state, dispatch] = useReducer(reducer, initialState);
   // const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const showModal = (message: string) => {
-  //   console.log("OPEN MODAL: modal: ", message);
-  //   setIsModalOpen(true);
-  //   // Optional: You can also set a message to be displayed in the modal
-  // };
+  const resetState = () => {
+    console.log('RESET_STATE');
+    // @ts-ignore
+    dispatch({
+      type: WalletActions.RESET_STATE,
+      payload: null,
+    });
+  };
 
-  // const hideModal = () => {
-  //   setIsModalOpen(false);
-  // };
+  const setIntent = (intent: string) => {
+    console.log('intent modal: ', intent);
+    // @ts-ignore
+    dispatch({
+      type: WalletActions.SET_INTENT,
+      payload: intent,
+    });
+    // Optional: You can also set a message to be displayed in the modal
+  };
+
+  const showModal = (modal: string) => {
+    console.log('OPEN MODAL: modal: ', modal);
+    // @ts-ignore
+    dispatch({
+      type: WalletActions.OPEN_MODAL,
+      payload: modal,
+    });
+    // Optional: You can also set a message to be displayed in the modal
+  };
+
+  const hideModal = () => {
+    console.log('CLOSE MODAL');
+    // @ts-ignore
+    dispatch({
+      type: WalletActions.OPEN_MODAL,
+      payload: null,
+    });
+  };
 
   // TODO add wallet to state
+  const clearHardwareError = () => {
+    console.log('Clearing hardware error state!');
+    // @ts-ignore
+    dispatch({
+      type: WalletActions.SET_HARDWARE_ERROR,
+      payload: null,
+    });
+  };
 
-  const connectWallet = async function (wallet: string) {
+  const connectWallet = async function (wallet: string, chain?: any) {
     try {
       if (state && state?.app) {
         console.log('connectWallet: ', wallet);
-        const successPairWallet = await state.app.pairWallet(wallet);
+        let customPathsForWallet = localStorage.getItem(wallet + ':paths:add');
+        let disabledPathsForWallet = localStorage.getItem(wallet + ':paths:removed');
+
+        // Parse the strings to arrays
+        let customPathsArray = customPathsForWallet ? JSON.parse(customPathsForWallet) : [];
+        let disabledPathsArray = disabledPathsForWallet ? JSON.parse(disabledPathsForWallet) : [];
+
+        // Console log the arrays
+        console.log('Custom Paths for Wallet:', customPathsArray);
+        console.log('Disabled Paths for Wallet:', disabledPathsArray);
+
+        const successPairWallet = await state.app.pairWallet(wallet, [], chain);
         console.log('successPairWallet: ', successPairWallet);
-        console.log('state.app.assetContext: ', state.app.assetContext);
-        console.log('state.app.blockchainContext: ', state.app.blockchainContext);
-        console.log('state.app.context: ', state.app.context);
-        if (state && state.app) {
+        if (successPairWallet && successPairWallet.error) {
+          //push error to state
+          console.log('successPairWallet.error: ', successPairWallet.error);
           // @ts-ignore
           dispatch({
-            type: WalletActions.SET_CONTEXT,
-            payload: state.app.context,
+            type: WalletActions.SET_HARDWARE_ERROR,
+            payload: successPairWallet.error,
           });
-          // @ts-ignore
-          dispatch({
-            type: WalletActions.SET_ASSET_CONTEXT,
-            payload: state.app.assetContext,
-          });
-          // @ts-ignore
-          dispatch({
-            type: WalletActions.SET_BLOCKCHAIN_CONTEXT,
-            payload: state.app.blockchainContext,
-          });
-          // @ts-ignore
-          dispatch({
-            type: WalletActions.SET_PUBKEY_CONTEXT,
-            payload: state.app.pubkeyContext,
-          });
+        } else {
+          if (successPairWallet) localStorage.setItem('keepkeyApiKey', successPairWallet);
+          console.log('state.app.assetContext: ', state.app.assetContext);
+          console.log('state.app.context: ', state.app.context);
+
+          //add to local storage of connected wallets
+          localStorage.setItem(
+              'pairedWallets',
+              JSON.stringify([
+                ...new Set([
+                  ...JSON.parse(localStorage.getItem('pairedWallets') || '[]'),
+                  state.app.context,
+                ]),
+              ]),
+          );
+
+          //set last connected wallet
+          localStorage.setItem('lastConnectedWallet', state.app.context);
+
+          if (state && state.app) {
+            // if pioneer set in localStoage
+            if (state.app.isPioneer) {
+              localStorage.setItem('isPioneer', state.app.isPioneer);
+            }
+            // @ts-ignore
+            dispatch({
+              type: WalletActions.SET_CONTEXT,
+              payload: state.app.context,
+            });
+            // @ts-ignore
+            dispatch({
+              type: WalletActions.SET_ASSET_CONTEXT,
+              payload: state.app.assetContext,
+            });
+            // @ts-ignore
+            dispatch({
+              type: WalletActions.SET_BLOCKCHAIN_CONTEXT,
+              payload: state.app.blockchainContext,
+            });
+            // @ts-ignore
+            dispatch({
+              type: WalletActions.SET_PUBKEY_CONTEXT,
+              payload: state.app.pubkeyContext,
+            });
+          }
         }
       }
     } catch (e) {
@@ -281,11 +390,11 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       // const serviceKey: string | null = localStorage.getItem("serviceKey"); // KeepKey api key
       let queryKey: string | null = localStorage.getItem('queryKey');
       let username: string | null = localStorage.getItem('username');
-      let keepkeyApiKey: string | null = localStorage.getItem('keepkeyApiKey');
+      const keepkeyApiKey: string | null = localStorage.getItem('keepkeyApiKey');
       // @ts-ignore
       dispatch({ type: WalletActions.SET_USERNAME, payload: username });
       // if auto connecting
-      // const isOnboarded = localStorage.getItem("userOnboarded");
+      const lastConnectedWallet: string | null = localStorage.getItem('lastConnectedWallet');
 
       if (!queryKey) {
         queryKey = `key:${uuidv4()}`;
@@ -309,10 +418,10 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
       // @TODO add custom paths from localstorage
       const paths: any = [];
-      console.log('VITE_PIONEER_URL_SPEC: ');
       const spec =
-          // @ts-ignore
-          import.meta.env.VITE_PIONEER_URL_SPEC || 'https://swaps.pro/spec/swagger.json';
+          localStorage.getItem('pioneerUrl') ||
+          import.meta.env.VITE_PIONEER_URL_SPEC ||
+          'https://pioneers.dev/spec/swagger.json';
       // @ts-ignore
       console.log('spec: ', spec);
       const wss = 'wss://pioneers.dev';
@@ -342,11 +451,10 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       if (!configPioneer.utxoApiKey) throw Error('blockchair api key required!');
       const appInit = new SDK(spec, configPioneer);
 
-      // @ts-ignore
-      if (appInit.keepkeyApiKey !== keepkeyApiKey)
-        { // @ts-ignore
-          localStorage.setItem('keepkeyApiKey', appInit.keepkeyApiKey);
-        }
+      if (appInit.keepkeyApiKey !== keepkeyApiKey) {
+        console.log('SAVING API KEY. ');
+        localStorage.setItem('keepkeyApiKey', appInit.keepkeyApiKey);
+      }
 
       // @ts-ignore
       const api = await appInit.init();
@@ -372,6 +480,19 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
       walletActionsArray.forEach((action) => {
         events.on(action, (data: any) => {
+          // SET_BALANCES
+          if (action === WalletActions.SET_BALANCES) {
+            // @ts-ignore
+            console.log('setting balances for context: ', appInit.context);
+            if (appInit.context)
+              localStorage.setItem(appInit.context + ':balanceCache', JSON.stringify(data));
+          }
+          if (action === WalletActions.SET_PUBKEYS) {
+            // @ts-ignore
+            console.log('setting balances for context: ', appInit.context);
+            if (appInit.context)
+              localStorage.setItem(appInit.context + ':pubkeyCache', JSON.stringify(data));
+          }
           // @ts-ignore
           dispatch({
             type: action,
@@ -380,9 +501,33 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
         });
       });
 
-      // TODO why dis no worky
-      //TODO if keepkey available always connect
-      // @TODO if any wallet been connected before connect
+      if (lastConnectedWallet) {
+        // console.log('Loading from cache!');
+        // await appInit.setContext(lastConnectedWallet);
+        // //get wallet type
+        // const walletType = lastConnectedWallet.split(':')[0];
+        // console.log('walletType: ', walletType);
+        // //set blockchains
+        // let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
+        // let allByCaip = blockchainsForContext.map((chainStr) => {
+        //   const chainEnum = getChainEnumValue(chainStr);
+        //   return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+        // });
+        // console.log('allByCaip: ', allByCaip);
+        // await appInit.setBlockchains(allByCaip);
+        //
+        // // balance cache
+        // let balanceCache: any = localStorage.getItem(lastConnectedWallet + ':balanceCache');
+        // balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+        // console.log('balanceCache: ', balanceCache);
+        // await appInit.loadBalanceCache(balanceCache);
+        //
+        // // pubkey cache
+        // let pubkeyCache: any = localStorage.getItem(lastConnectedWallet + ':pubkeyCache');
+        // pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+        // console.log('pubkeyCache: ', pubkeyCache);
+        // await appInit.loadPubkeyCache(pubkeyCache);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -390,18 +535,28 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 
   // end
   const value: any = useMemo(
-      () => ({ state, dispatch, connectWallet, onStart }),
+      () => ({
+        state,
+        dispatch,
+        connectWallet,
+        clearHardwareError,
+        onStart,
+        showModal,
+        hideModal,
+        setIntent,
+        resetState,
+      }),
       [connectWallet, state],
   );
 
   return <PioneerContext.Provider value={value}>{children}</PioneerContext.Provider>;
 };
 
-export interface usePioneerType {
+export interface UsePioneerType {
   state: any;
   dispatch: any;
   onStart: () => void;
-  connectWallet: (wallet: string) => void;
+  connectWallet: (wallet: string, chain?: any) => void;
 }
 
-export const usePioneer = (): usePioneerType => useContext(PioneerContext as any);
+export const usePioneer = (): UsePioneerType => useContext(PioneerContext as any);

@@ -1,101 +1,82 @@
-import { Search2Icon } from "@chakra-ui/icons";
+import { Search2Icon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
   Button,
-  Checkbox,
-  HStack,
-  Stack,
+  Flex,
+  Input,
   InputGroup,
   InputLeftElement,
-  Input,
+  Stack,
   Text,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { usePioneer } from "lib/context/Pioneer";
-import MiddleEllipsis from "lib/components/MiddleEllipsis";
+} from '@chakra-ui/react';
+// @ts-ignore
+import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
+import { useEffect, useState } from 'react';
 
-//@ts-ignore
-export default function AssetSelect({ onClose, onlyOwned }) {
-  const { state, dispatch } = usePioneer();
-  const { api, app, user, balances } = state;
-  const [searchQuery, setSearchQuery] = useState("");
+import { usePioneer } from '../../context/Pioneer';
+
+export default function AssetSelect({ onSelect }: any) {
+  const { state } = usePioneer();
+  const { app, balances } = state;
   const [currentPage, setCurrentPage] = useState([]);
-  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  // const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [showOwnedAssets, setShowOwnedAssets] = useState(false);
-  const [timeOut, setTimeOut] = useState(null); // Added timeout state
-  const itemsPerPage = 6;
+  // const [totalAssets, setTotalAssets] = useState(0);
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
+  // const itemsPerPage = 6;
+  // const cardWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
 
   const handleSelectClick = async (asset: any) => {
     try {
-      //console.log("asset select: ", asset.name);
-      const changeAssetContext = await app.setAssetContext(asset);
-      //console.log("changeAssetContext: ", changeAssetContext);
-      onClose();
+      app.setAssetContext(asset);
+      onSelect(asset);
     } catch (e) {
       console.error(e);
     }
   };
 
-  const onSearch = async function (searchQuery: string) {
-    try {
-      if (!api) {
-        alert("Failed to init API!");
-        return;
-      }
-      //console.log("searchQuery: ", searchQuery);
-      const search = {
-        limit: itemsPerPage,
-        skip: currentPageIndex * itemsPerPage, // Use currentPageIndex for pagination
-        collection: "assets",
-        searchQuery: searchQuery,
-        searchFields: ["name", "symbol"],
-      };
-
-      const info = await api.SearchAtlas(search);
-      const currentPageData = info.data.results;
-      setCurrentPage(currentPageData);
-      setTotalAssets(info.data.total); // Update total assets count
-    } catch (e) {
-      console.error(e);
-    }
+  const handleSearchChange = (event: any) => {
+    setSearch(event.target.value);
+    // setCurrentPageIndex(0);
   };
 
-  const fetchPage = async (pageIndex: number) => {
-    try {
-      if (!api) {
-        alert("Failed to init API!");
-        return;
+  const toggleSortOrder = () => {
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
+
+  const filteredAssets = currentPage
+    .filter((asset: any) => {
+      return (
+        (showOwnedAssets ? asset.valueUsd !== null : true) &&
+        asset?.name?.toLowerCase().includes(search.toLowerCase()) &&
+        (asset.valueUsd ? parseFloat(asset.valueUsd) >= 1 : false)
+      );
+    })
+    .sort((a: any, b: any) => {
+      if (sortOrder === 'asc') {
+        return (a.valueUsd || 0) - (b.valueUsd || 0);
       }
-      console.log("balances: ", balances);
-      //if onlyOwned
+      return (b.valueUsd || 0) - (a.valueUsd || 0);
+    });
+
+  const fetchPage = async () => {
+    try {
       if (balances) {
         setShowOwnedAssets(true);
         setCurrentPage(balances);
-        //load balances
-        console.log("balances: ", app.balances);
+        console.log('balances: ', balances);
+        // setTotalAssets(balances.length);
       }
-      // const search = {
-      //   limit: itemsPerPage,
-      //   skip: pageIndex * itemsPerPage,
-      //   collection: "assets",
-      //   ownedBy: showOwnedAssets ? user.id : undefined,
-      // };
-      //
-      // const info = await api.SearchAtlas(search);
-      // const currentPageData = info.data.results;
-      // setCurrentPage(currentPageData);
-      // setTotalAssets(info.data.total); // Update total assets count
     } catch (e) {
       console.error(e);
     }
   };
 
   useEffect(() => {
-    fetchPage(currentPageIndex);
-  }, [currentPageIndex, showOwnedAssets, balances]);
-
-  const [totalAssets, setTotalAssets] = useState(0);
+    fetchPage();
+  }, [balances]);
 
   return (
     <Stack spacing={4}>
@@ -104,76 +85,80 @@ export default function AssetSelect({ onClose, onlyOwned }) {
           <Search2Icon color="gray.300" />
         </InputLeftElement>
         <Input
+          value={search}
+          onChange={handleSearchChange}
           placeholder="Bitcoin..."
           type="text"
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            if (timeOut) {
-              clearTimeout(timeOut);
-            }
-            setTimeOut(
-              // @ts-ignore
-              setTimeout(() => {
-                setCurrentPageIndex(0); // Reset pageIndex when searching
-                onSearch(e.target.value);
-              }, 1000)
-            );
-          }}
         />
       </InputGroup>
       <Box>
-        <Text fontSize="2xl">Total Assets: {totalAssets}</Text>
-        <Checkbox
-          isChecked={showOwnedAssets}
-          onChange={() => setShowOwnedAssets(!showOwnedAssets)}
-        >
-          Show only owned assets
-        </Checkbox>
-        {currentPage.map((asset: any, index: number) => (
+        {/* <Text fontSize="2xl">Total Assets: {totalAssets}</Text> */}
+        {/* <Checkbox */}
+        {/*  isChecked={showOwnedAssets} */}
+        {/*  onChange={() => setShowOwnedAssets(!showOwnedAssets)} */}
+        {/* > */}
+        {/*  Show only owned assets */}
+        {/* </Checkbox> */}
+        <Button onClick={toggleSortOrder} size="sm">
+          Sort by Value{' '}
+          {sortOrder === 'asc' ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </Button>
+        <br />
+        <br />
+        {filteredAssets.map((asset: any, index: number) => (
+          // eslint-disable-next-line react/no-array-index-key
           <Box key={index}>
-            <HStack spacing={4} alignItems="center">
-              {/*<Avatar src={asset?.image} />*/}
-              <Box>
-                {/*<small>*/}
-                {/*  asset: <MiddleEllipsis text={asset?.caip} />*/}
-                {/*</small>*/}
-                <br />
-                <small>name: {asset.asset.name}</small>
-                <br />
-                <small>chain: {asset.asset.chain}</small>
-                <br />
-                <small>symbol: {asset.asset.symbol}</small>
-                <br />
-                <small>balance: {asset.assetAmount.toString()}</small>
+            <Flex
+              alignItems="center"
+              borderRadius="md"
+              border="1px solid #fff"
+              bg="black"
+              boxShadow="sm"
+              padding={2}
+            >
+              <Avatar
+                size="md"
+                src={`https://pioneers.dev/coins/${
+                  COIN_MAP_LONG[asset?.chain]
+                }.png`}
+              />
+              <Box ml={3}>
+                <Text fontSize="sm">Asset: {asset?.caip}</Text>
+                <Text fontSize="sm">symbol: {asset?.symbol}</Text>
+                <Text fontSize="sm">chain: {asset?.chain}</Text>
+                <Text fontSize="sm">
+                  Value USD:{' '}
+                  {typeof asset?.valueUsd === 'string'
+                    ? (+asset.valueUsd).toFixed(2).toLocaleString()
+                    : ''}
+                </Text>
               </Box>
-            </HStack>
-            <HStack mt={2} spacing={2}>
               <Button
+                ml="auto"
+                onClick={() => handleSelectClick(asset)}
                 size="sm"
                 variant="outline"
-                onClick={() => handleSelectClick(asset)}
               >
                 Select
               </Button>
-            </HStack>
+            </Flex>
           </Box>
         ))}
       </Box>
-      <HStack mt={4}>
-        <Button
-          isDisabled={currentPageIndex === 0}
-          onClick={() => setCurrentPageIndex(currentPageIndex - 1)}
-        >
-          Previous Page
-        </Button>
-        <Button
-          isDisabled={currentPage.length < itemsPerPage}
-          onClick={() => setCurrentPageIndex(currentPageIndex + 1)}
-        >
-          Next Page
-        </Button>
-      </HStack>
+      <Flex justifyContent="space-between" mt={4}>
+        {/* <Button */}
+        {/*  isDisabled={currentPageIndex === 0} */}
+        {/*  onClick={() => setCurrentPageIndex(currentPageIndex - 1)} */}
+        {/* > */}
+        {/*  Previous Page */}
+        {/* </Button> */}
+        {/* <Button */}
+        {/*  isDisabled={filteredAssets.length < itemsPerPage} */}
+        {/*  onClick={() => setCurrentPageIndex(currentPageIndex + 1)} */}
+        {/* > */}
+        {/*  Next Page */}
+        {/* </Button> */}
+      </Flex>
     </Stack>
   );
 }

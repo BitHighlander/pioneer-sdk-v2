@@ -1,251 +1,149 @@
+import { CheckIcon } from '@chakra-ui/icons';
 import {
-    Box,
-    Text,
-    Button,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalBody,
-    ModalFooter,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    Card,
-    CardBody,
-    TabPanel,
-    Avatar,
-    SimpleGrid,
-    AvatarBadge,
-    Input,
-    FormControl,
-    FormLabel,
-    FormErrorMessage,
-    VStack,
-    Radio,
-    RadioGroup
-} from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-import * as bip39 from 'bip39';
-// @ts-ignore
-import KEEPKEY_ICON from "lib/assets/png/keepkey.png";
-// @ts-ignore
-import METAMASK_ICON from "lib/assets/png/metamask.png";
-// @ts-ignore
-import PIONEER_ICON from "lib/assets/png/pioneer.png";
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Link,
+  SimpleGrid,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 
-import { usePioneer } from "lib/context/Pioneer";
+import pioneerImage from '../../assets/png/pioneerMan.png';
+import { getWalletContent } from '../../components/WalletIcon';
+import { usePioneer } from '../../context/Pioneer';
 
-interface ModalProps {
-    onClose: () => void;
+export default function Pubkeys({ onClose, setModalType, setWalletType }: any) {
+  const { state, connectWallet, onStart } = usePioneer();
+  const { app } = state;
+  const [server, setServer] = useState('https://pioneers.dev/spec/swagger.json');
+  const [showWalletSelection, setShowWalletSelection] = useState(false);
+  const [showAllWallets, setShowAllWallets] = useState(false);
+  const [walletsAvailable, setWalletsAvailable] = useState([]);
+
+  const onStartApp = async function () {
+    try {
+      console.log('onStart');
+      if (app && app.wallets) {
+        setWalletsAvailable(app.wallets);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  useEffect(() => {
+    onStartApp();
+  }, [app, app?.wallets, app?.isPioneer]);
+
+  useEffect(() => {
+    let pioneerUrl = localStorage.getItem('pioneerUrl');
+    if (pioneerUrl) {
+      setShowWalletSelection(true);
+      onStart();
+    }
+  }, []);
+
+  const handleWalletClick = async (wallet: string) => {
+    wallet = wallet.toUpperCase();
+    // setPioneerImage('');
+    setWalletType(wallet);
+    setModalType(wallet);
+    console.log('Clicked wallet:', wallet);
+    const resultPair = await connectWallet(wallet);
+    console.log('resultPair: ', resultPair);
+  };
+
+  const handleServerChange = (event) => {
+    setServer(event.target.value);
+  };
+
+  const handleSubmit = async () => {
+    localStorage.setItem('pioneerUrl', server);
+    console.log('Server:', server);
+    await onStart();
+    setShowWalletSelection(true);
+  };
+
+  const isDefaultServer = server === 'https://pioneers.dev/spec/swagger.json';
+
+  const toggleShowAllWallets = () => {
+    setShowAllWallets(!showAllWallets);
+  };
+
+  const renderWallets = () => {
+    const walletsToDisplay = showAllWallets
+      ? walletsAvailable
+      : walletsAvailable.filter((wallet) =>
+          ['METAMASK', 'KEEPKEY', 'LEDGER'].includes(wallet.type),
+        );
+    return walletsToDisplay.map((wallet) => (
+      <Box
+        border="1px"
+        borderColor="gray.200"
+        borderRadius="md"
+        key={wallet.type}
+        onClick={() => handleWalletClick(wallet.type)}
+        p={2}
+      >
+        {getWalletContent(wallet.type)}
+        <Text fontSize="sm">{wallet.type}</Text>
+      </Box>
+    ));
+  };
+
+  // Server Selection UI
+  const ServerSelectionUI = () => (
+    <Stack spacing={4}>
+      <Flex alignItems="center">
+        <Avatar size="xl" src={pioneerImage} />
+        <Text fontStyle="italic" ml={4} textAlign="right">
+          Welcome to the world of pioneer, to start your journey you can select your pioneer server,
+          if you have a custom pioneer server you can insert it here. Default is
+          <Link isExternal color="blue.500" href="https://pioneers.dev/docs">
+            {' '}
+            pioneers.dev
+          </Link>
+        </Text>
+      </Flex>
+
+      <InputGroup>
+        <Input onChange={handleServerChange} placeholder="Enter server URL" value={server} />
+        {isDefaultServer && <InputRightElement children={<CheckIcon color="green.500" />} />}
+      </InputGroup>
+
+      <Button colorScheme="blue" onClick={handleSubmit}>
+        Next
+      </Button>
+
+      <Box>
+        <Link isExternal href="https://example.com/deploy-server">
+          Click here to learn how to deploy a pioneer server
+        </Link>
+      </Box>
+    </Stack>
+  );
+
+  // Wallet Selection UI
+  const WalletSelectionUI = () => (
+    <Stack spacing={4}>
+      <Text>Connect your Wallet...</Text>
+      <SimpleGrid columns={3} spacing={2}>
+        {renderWallets()}
+      </SimpleGrid>
+      <Button colorScheme="blue" mt={2} onClick={toggleShowAllWallets} size="sm">
+        {showAllWallets ? 'Hide Wallets' : 'Show All Wallets'}
+      </Button>
+      <Text color="blue.500" cursor="pointer" mb={2} mt={4}>
+        I dont have a wallet
+      </Text>
+      <Button colorScheme="green">Create New Wallet</Button>
+    </Stack>
+  );
+
+  return showWalletSelection ? WalletSelectionUI() : ServerSelectionUI();
 }
-//@ts-ignore
-const Onboarding: React.FC<ModalProps> = ({ onClose }) => {
-    const { state, dispatch } = usePioneer();
-    const { api, app, user, context } = state;
-    const [walletDescriptions, setWalletDescriptions] = useState([]);
-    const [balances, setBalances] = useState([]);
-    const [metamaskPaired, setMetamaskPaired] = useState(false);
-    const [keepkeyPaired, setKeepkeyPaired] = useState(false);
-    const [nativePaired, setNativePaired] = useState(false);
-    const [walletType, setWalletType] = useState("");
-    const [pubkeyContext, setPubkeyContext] = useState("");
-    const [seedPhrase, setSeedPhrase] = useState('');
-    const [error, setError] = useState(null);
-    const [isValid, setIsValid] = useState(false);
-    const [action, setAction] = useState(null);
-
-    const setUser = async function () {
-        try {
-            if (user && user.wallets) {
-                const { wallets, walletDescriptions, balances, pubkeys } = user;
-                setWalletDescriptions(walletDescriptions);
-                setBalances(balances);
-            }
-        } catch (e) {
-            console.error("header e: ", e);
-        }
-    };
-
-    const setContextWallet = async function (wallet: string) {
-        try {
-            //console.log("setContextWallet: ", wallet);
-            // eslint-disable-next-line no-console
-            //console.log("wallets: ", app.wallets);
-            const matchedWallet = app.wallets.find(
-                (w: { type: string }) => w.type === wallet
-            );
-            //console.log("matchedWallet: ", matchedWallet);
-            if (matchedWallet) {
-                setWalletType(matchedWallet.type);
-                const context = await app.setContext(matchedWallet.wallet);
-                //console.log("result change: ", context);
-                //console.log("app.context: ", app.context);
-
-                //console.log(
-                //   "app.pubkeyContext: ",
-                //   app.pubkeyContext.master || app.pubkeyContext.pubkey
-                // );
-
-                const pubkeyContext =
-                    app.pubkeyContext.master || app.pubkeyContext.pubkey;
-
-                setPubkeyContext(pubkeyContext);
-                dispatch({ type: "SET_CONTEXT", payload: app.context });
-                dispatch({ type: "SET_PUBKEY_CONTEXT", payload: app.pubkeyContext });
-                // dispatch({ type: "SET_WALLET", payload: wallet });
-            } else {
-                //console.log("No wallet matched the type of the context");
-            }
-        } catch (e) {
-            console.error("header e: ", e);
-        }
-    };
-
-    useEffect(() => {
-        setUser();
-    }, [user]); // once on startup
-
-    useEffect(() => {
-        const words = seedPhrase.trim().split(' ');
-        if (words.length === 12 && words.every(word => word.length > 0)) {
-            setError(null);
-            setIsValid(true);
-        } else {
-            // @ts-ignore
-            setError('Seed phrase must be exactly 12 words');
-            setIsValid(false);
-        }
-    }, [seedPhrase]);
-
-    const handleSubmit = (event: { preventDefault: () => void; }) => {
-        event.preventDefault();
-        if (isValid) {
-            console.log('Seed Phrase Submitted:', seedPhrase);
-            //save to local storage
-            localStorage.setItem("seedPhrase", seedPhrase);
-            // @ts-ignore
-            localStorage.setItem("isOnboarded", "true");
-            alert("Wallet Saved to localstorage. please restart app /n (Note: this is not secure! use a hardware wallet!)");
-            onClose()
-        }
-    };
-
-    const handleActionSelection = (value: string) => {
-        console.log("value: ", value);
-        // @ts-ignore
-        setAction(value);
-        if (value === 'import'){
-            setSeedPhrase('');
-        }
-    };
-
-    const handleImport = () => {
-        setSeedPhrase("");
-        // @ts-ignore
-        setAction('import')
-    };
-
-    const handleGenerate = () => {
-        const newSeedPhrase = bip39.generateMnemonic();
-        setSeedPhrase(newSeedPhrase);
-        // @ts-ignore
-        setAction('generate');
-    };
-
-    return (
-        <Box>
-            Welcome to Pioneer SDK! Please select a wallet to continue.
-            <br/>
-            <Avatar size="lg" src={PIONEER_ICON}>
-            </Avatar>
-            {action ? (
-                <>
-                    <form onSubmit={handleSubmit}>
-                        <FormControl isInvalid={!!error}>
-                            <FormLabel htmlFor="seedPhrase">Seed Phrase</FormLabel>
-                            <Input
-                                id="seedPhrase"
-                                name="seedPhrase"
-                                type="text"
-                                value={seedPhrase}
-                                onChange={(e) => setSeedPhrase(e.target.value)}
-                                borderColor={isValid ? 'green.500' : 'red.500'}
-                            />
-                            <FormErrorMessage>{error}</FormErrorMessage>
-                        </FormControl>
-                        <Button mt={4} colorScheme="teal" type="submit">
-                            Submit
-                        </Button>
-                    </form>
-                    <Button mt={4} onClick={() => setAction(null)}>
-                        Go Back
-                    </Button>
-                </>
-            ) : (
-                <VStack spacing={4}>
-                    <Button colorScheme="teal" onClick={handleGenerate}>
-                        Generate New Seed Phrase
-                    </Button>
-                    <Button colorScheme="teal" onClick={handleImport}>
-                        Import Seed Phrase
-                    </Button>
-                </VStack>
-            )}
-            {/*<SimpleGrid columns={3} row={1}>*/}
-            {/*    <Card align="center" onClick={() => setContextWallet("native")}>*/}
-            {/*        <CardBody>*/}
-            {/*            <Avatar src={PIONEER_ICON}>*/}
-            {/*                {nativePaired ? (*/}
-            {/*                    <div>*/}
-            {/*                        <AvatarBadge boxSize="1.25em" bg="green.500" />*/}
-            {/*                    </div>*/}
-            {/*                ) : (*/}
-            {/*                    <div>*/}
-            {/*                        <AvatarBadge boxSize="1.25em" bg="red.500" />*/}
-            {/*                    </div>*/}
-            {/*                )}*/}
-            {/*            </Avatar>*/}
-            {/*        </CardBody>*/}
-            {/*        <small>Pioneer</small>*/}
-            {/*    </Card>*/}
-            {/*    <Card align="center" onClick={() => setContextWallet("metamask")}>*/}
-            {/*        <CardBody>*/}
-            {/*            <Avatar src={METAMASK_ICON}>*/}
-            {/*                {metamaskPaired ? (*/}
-            {/*                    <div>*/}
-            {/*                        <AvatarBadge boxSize="1.25em" bg="green.500" />*/}
-            {/*                    </div>*/}
-            {/*                ) : (*/}
-            {/*                    <div>*/}
-            {/*                        <AvatarBadge boxSize="1.25em" bg="red.500" />*/}
-            {/*                    </div>*/}
-            {/*                )}*/}
-            {/*            </Avatar>*/}
-            {/*        </CardBody>*/}
-            {/*        <small>MetaMask</small>*/}
-            {/*    </Card>*/}
-            {/*    <Card align="center" onClick={() => setContextWallet("keepkey")}>*/}
-            {/*        <CardBody>*/}
-            {/*            <Avatar src={KEEPKEY_ICON}>*/}
-            {/*                {keepkeyPaired ? (*/}
-            {/*                    <div>*/}
-            {/*                        <AvatarBadge boxSize="1.25em" bg="green.500" />*/}
-            {/*                    </div>*/}
-            {/*                ) : (*/}
-            {/*                    <div>*/}
-            {/*                        <AvatarBadge boxSize="1.25em" bg="red.500" />*/}
-            {/*                    </div>*/}
-            {/*                )}*/}
-            {/*            </Avatar>*/}
-            {/*        </CardBody>*/}
-            {/*        <small>KeepKey</small>*/}
-            {/*    </Card>*/}
-            {/*</SimpleGrid>*/}
-        </Box>
-    );
-};
-
-export default Onboarding;
