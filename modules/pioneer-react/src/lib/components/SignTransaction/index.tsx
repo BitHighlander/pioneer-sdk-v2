@@ -29,7 +29,7 @@ export default function SignTransaction({
   setTxhash,
   inputAmount,
 }: any) {
-  const { state, connectWallet } = usePioneer();
+  const { state, connectWallet, setIntent, showModal } = usePioneer();
   const { app, assetContext, outboundAssetContext } = state;
   const [totalNetworkFees, setTotalNetworkFees] = useState("");
   const [inputFeeAsset, setInputFeeAsset] = useState("");
@@ -66,16 +66,29 @@ export default function SignTransaction({
     const contextSigning = assetContext.context;
     console.log("contextSigning: ", contextSigning);
 
-    // verify is connected
-    const isContextExist = app.wallets.some(
-      (wallet: any) => wallet.context === contextSigning
+    console.log('assetContext: ', assetContext);
+    setIntent(
+        'swap:' +
+        assetContext.chain +
+        ':' +
+        assetContext.symbol +
+        ':' +
+        inputAmount +
+        ':' +
+        outboundAssetContext?.chain +
+        ':' +
+        outboundAssetContext?.symbol
     );
-    if (!isContextExist) {
+
+    // verify is connected
+    const walletInfo = await app.swapKit.getWalletByChain(assetContext.chain);
+    if (!walletInfo) {
       setIsPairing(true);
       const contextType = contextSigning.split(":")[0];
       console.log("contextType: ", contextType);
       // connect it
-      connectWallet(contextType.toUpperCase());
+      let walletType = app.context.split(':')[0];
+      showModal(walletType);
     } else {
       console.log("Approving TX");
       setIsApproved(true);

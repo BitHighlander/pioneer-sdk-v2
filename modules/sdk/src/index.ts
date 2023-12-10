@@ -47,65 +47,65 @@ export interface PioneerSDKConfig {
 
 export class SDK {
     // @ts-ignore
-    private status: string;
+    public status: string;
 
-    private username: string;
+    public username: string;
 
-    private queryKey: string;
+    public queryKey: string;
 
-    private wss: string;
-
-    // @ts-ignore
-    private spec: any;
-
-    private ethplorerApiKey: string;
-
-    private covalentApiKey: string;
-
-    private utxoApiKey: string;
-
-    private walletConnectProjectId: string;
+    public wss: string;
 
     // @ts-ignore
-    private context: string;
+    public spec: any;
 
-    private assetContext: any;
+    public ethplorerApiKey: string;
 
-    // @ts-ignore
-    private blockchainContext: any;
+    public covalentApiKey: string;
 
-    // @ts-ignore
-    private pubkeyContext: any;
+    public utxoApiKey: string;
 
-    // @ts-ignore
-    private outboundAssetContext: any;
+    public walletConnectProjectId: string;
 
     // @ts-ignore
-    private outboundBlockchainContext: any;
+    public context: string;
+
+    public assetContext: any;
 
     // @ts-ignore
-    private outboundPubkeyContext: any;
-
-    private swapKit: SwapKitCore | null;
-
-    private pioneer: any;
+    public blockchainContext: any;
 
     // @ts-ignore
-    private paths: any[];
-
-    private pubkeys: any[];
-
-    private wallets: any[];
-
-    private balances: any[];
+    public pubkeyContext: any;
 
     // @ts-ignore
-    private nfts: any[];
-
-    private events: any;
+    public outboundAssetContext: any;
 
     // @ts-ignore
-    private pairWallet: (wallet: any, customPaths: any, ledgerApp?: any) => Promise<any>;
+    public outboundBlockchainContext: any;
+
+    // @ts-ignore
+    public outboundPubkeyContext: any;
+
+    public swapKit: SwapKitCore | null;
+
+    public pioneer: any;
+
+    // @ts-ignore
+    public paths: any[];
+
+    public pubkeys: any[];
+
+    public wallets: any[];
+
+    public balances: any[];
+
+    // @ts-ignore
+    public nfts: any[];
+
+    public events: any;
+
+    // @ts-ignore
+    public pairWallet: (wallet: any, customPaths: any, ledgerApp?: any) => Promise<any>;
 
     // public startSocket: () => Promise<any>;
     // public stopSocket: () => any;
@@ -114,17 +114,17 @@ export class SDK {
     // public build: (tx:any) => Promise<any>;
     // public sign: (tx:any, wallet:any) => Promise<any>;
     // public broadcast: (tx:any) => Promise<any>;
-    private setContext: (context: string) => Promise<{ success: boolean }>;
+    public setContext: (context: string) => Promise<{ success: boolean }>;
 
     // @ts-ignore
     public refresh: () => Promise<any>;
 
-    // private setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
+    // public setPubkeyContext: (pubkeyObj:any) => Promise<boolean>;
     // @ts-ignore
-    private setAssetContext: (asset: any) => Promise<any>;
+    public setAssetContext: (asset: any) => Promise<any>;
 
     // @ts-ignore
-    private setOutboundAssetContext: (asset: any) => Promise<any>;
+    public setOutboundAssetContext: (asset: any) => Promise<any>;
 
     // @ts-ignore
     public keepkeyApiKey: string;
@@ -134,17 +134,18 @@ export class SDK {
     // @ts-ignore
     public loadBalanceCache: (balances: any) => Promise<void>;
     public loadPubkeyCache: (pubkeys: any) => Promise<void>;
-    private getPubkeys: () => Promise<boolean>;
-    private getBalances: () => Promise<boolean>;
-    private blockchains: any[];
-    private clearWalletState: () => Promise<boolean>;
-    private setBlockchains: (blockchains: any) => Promise<void>;
+    public getPubkeys: () => Promise<boolean>;
+    public getBalances: () => Promise<boolean>;
+    public blockchains: any[];
+    public clearWalletState: () => Promise<boolean>;
+    public setBlockchains: (blockchains: any) => Promise<void>;
     public appName: string;
-    private appIcon: any;
+    public appIcon: any;
+    private init: (walletsVerbose: any, setup: any) => Promise<any>;
     constructor(spec: string, config: PioneerSDKConfig) {
         this.status = 'preInit';
-        this.appName = config.appName || 'pioneer-sdk';
-        this.appIcon = config.appIcon || 'https://pioneers.dev/coins/pioneerMan.png';
+        this.appName = 'pioneer-sdk';
+        this.appIcon = 'https://pioneers.dev/coins/pioneerMan.png';
         this.spec = spec || config.spec || 'https://pioneers.dev/spec/swagger';
         this.wss = config.wss || 'wss://pioneers.dev';
         this.username = config.username;
@@ -171,19 +172,19 @@ export class SDK {
         this.outboundPubkeyContext = null;
         this.wallets = [];
         this.events = new EventEmitter();
-        // @ts-ignore
-        this.init = async function (walletsVerbose: any) {
+        this.init = async function (walletsVerbose: any, setup: any) {
             const tag = `${TAG} | init | `;
             try {
                 if (!this.username) throw Error('username required!');
                 if (!this.queryKey) throw Error('queryKey required!');
                 if (!this.wss) throw Error('wss required!');
+                if (!walletsVerbose) throw Error("walletsVerbose required!")
+                if (!setup) throw Error("setup required!")
                 if (!this.wallets) throw Error('wallets required!');
                 if (!this.ethplorerApiKey) throw Error('ethplorerApiKey required!');
                 if (!this.covalentApiKey) throw Error('covalentApiKey required!');
                 if (!this.utxoApiKey) throw Error('utxoApiKey required!');
                 if (!this.walletConnectProjectId) throw Error('walletConnectProjectId required!');
-
                 const PioneerClient = new Pioneer(config.spec, config);
                 this.pioneer = await PioneerClient.init();
                 if (!this.pioneer) throw Error('Fialed to init pioneer server!');
@@ -456,24 +457,27 @@ export class SDK {
         this.getPubkeys = async function () {
             const tag = `${TAG} | getPubkeys | `;
             try {
+                if(this.paths.length === 0) throw Error('No paths found!');
+                if(!this.swapKit) throw Error('this.swapKit not initialized!');
                 //verify context
                 //TODO handle ledger contexts
-                // const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
-                // console.log('ethAddress: ', ethAddress);
-                // if (this.context.indexOf(ethAddress) === -1) {
-                //   console.log('Clearing Wallet state!');
-                //   this.clearWalletState();
-                // }
-                // // Verify if pubkeys match context
-                // if (this.pubkeys.some((pubkey) => pubkey.context !== this.context)) {
-                //   console.log('Invalid pubkeys found!');
-                //   this.pubkeys = [];
-                // }
-                // // Verify if balances match context
-                // if (this.balances.some((balance) => balance.context !== this.context)) {
-                //   console.log('Invalid balances found!');
-                //   this.balances = [];
-                // }
+                const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
+                console.log('ethAddress: ', ethAddress);
+                if (this.context.indexOf(ethAddress) === -1) {
+                  console.log('Clearing Wallet state!');
+                  this.clearWalletState();
+                }
+                // Verify if pubkeys match context
+                if (this.pubkeys.some((pubkey) => pubkey.context !== this.context)) {
+                  console.log('Invalid pubkeys found!');
+                  this.pubkeys = [];
+                }
+                // Verify if balances match context
+                if (this.balances.some((balance) => balance.context !== this.context)) {
+                  console.log('Invalid balances found!');
+                  this.balances = [];
+                }
+                console.log("paths: ",this.paths)
                 //TODO if wallet doesn't support blockchains, throw error
                 let pubkeysNew = [];
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -481,7 +485,9 @@ export class SDK {
                     const blockchain = this.blockchains[i];
                     let chain: Chain = NetworkIdToChain[blockchain];
                     let paths = [];
+                    console.log("blockchain: ",blockchain)
                     if (blockchain.indexOf('eip155') > -1) {
+                        console.log("ETH like detected!")
                         //all eip155 blockchains use the same path
                         paths = this.paths.filter((path) => path.network === 'eip155:1');
                         chain = Chain.Ethereum;

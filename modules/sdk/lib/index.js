@@ -19,7 +19,6 @@ const types_1 = require("@coinmasters/types");
 // @ts-ignore
 const pioneer_caip_1 = require("@pioneer-platform/pioneer-caip");
 // @ts-ignore
-// @ts-ignore
 const pioneer_client_1 = __importDefault(require("@pioneer-platform/pioneer-client"));
 const pioneer_coins_1 = require("@pioneer-platform/pioneer-coins");
 const events_1 = __importDefault(require("events"));
@@ -30,8 +29,8 @@ const TAG = ' | Pioneer-sdk | ';
 class SDK {
     constructor(spec, config) {
         this.status = 'preInit';
-        this.appName = config.appName || 'pioneer-sdk';
-        this.appIcon = config.appIcon || 'https://pioneers.dev/coins/pioneerMan.png';
+        this.appName = 'pioneer-sdk';
+        this.appIcon = 'https://pioneers.dev/coins/pioneerMan.png';
         this.spec = spec || config.spec || 'https://pioneers.dev/spec/swagger';
         this.wss = config.wss || 'wss://pioneers.dev';
         this.username = config.username;
@@ -58,8 +57,7 @@ class SDK {
         this.outboundPubkeyContext = null;
         this.wallets = [];
         this.events = new events_1.default();
-        // @ts-ignore
-        this.init = async function (walletsVerbose) {
+        this.init = async function (walletsVerbose, setup) {
             const tag = `${TAG} | init | `;
             try {
                 if (!this.username)
@@ -68,6 +66,10 @@ class SDK {
                     throw Error('queryKey required!');
                 if (!this.wss)
                     throw Error('wss required!');
+                if (!walletsVerbose)
+                    throw Error("walletsVerbose required!");
+                if (!setup)
+                    throw Error("setup required!");
                 if (!this.wallets)
                     throw Error('wallets required!');
                 if (!this.ethplorerApiKey)
@@ -349,24 +351,29 @@ class SDK {
             var _a, _b, _c;
             const tag = `${TAG} | getPubkeys | `;
             try {
+                if (this.paths.length === 0)
+                    throw Error('No paths found!');
+                if (!this.swapKit)
+                    throw Error('this.swapKit not initialized!');
                 //verify context
                 //TODO handle ledger contexts
-                // const ethAddress = this.swapKit.getAddress(Chain.Ethereum);
-                // console.log('ethAddress: ', ethAddress);
-                // if (this.context.indexOf(ethAddress) === -1) {
-                //   console.log('Clearing Wallet state!');
-                //   this.clearWalletState();
-                // }
-                // // Verify if pubkeys match context
-                // if (this.pubkeys.some((pubkey) => pubkey.context !== this.context)) {
-                //   console.log('Invalid pubkeys found!');
-                //   this.pubkeys = [];
-                // }
-                // // Verify if balances match context
-                // if (this.balances.some((balance) => balance.context !== this.context)) {
-                //   console.log('Invalid balances found!');
-                //   this.balances = [];
-                // }
+                const ethAddress = this.swapKit.getAddress(types_1.Chain.Ethereum);
+                console.log('ethAddress: ', ethAddress);
+                if (this.context.indexOf(ethAddress) === -1) {
+                    console.log('Clearing Wallet state!');
+                    this.clearWalletState();
+                }
+                // Verify if pubkeys match context
+                if (this.pubkeys.some((pubkey) => pubkey.context !== this.context)) {
+                    console.log('Invalid pubkeys found!');
+                    this.pubkeys = [];
+                }
+                // Verify if balances match context
+                if (this.balances.some((balance) => balance.context !== this.context)) {
+                    console.log('Invalid balances found!');
+                    this.balances = [];
+                }
+                console.log("paths: ", this.paths);
                 //TODO if wallet doesn't support blockchains, throw error
                 let pubkeysNew = [];
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -374,7 +381,9 @@ class SDK {
                     const blockchain = this.blockchains[i];
                     let chain = types_1.NetworkIdToChain[blockchain];
                     let paths = [];
+                    console.log("blockchain: ", blockchain);
                     if (blockchain.indexOf('eip155') > -1) {
+                        console.log("ETH like detected!");
                         //all eip155 blockchains use the same path
                         paths = this.paths.filter((path) => path.network === 'eip155:1');
                         chain = types_1.Chain.Ethereum;
@@ -395,7 +404,7 @@ class SDK {
                             let address = (_a = this.swapKit) === null || _a === void 0 ? void 0 : _a.getAddress(chain);
                             if (address) {
                                 pubkey = {
-                                    context: this.context,
+                                    context: this.context, // TODO this is not right?
                                     // wallet:walletSelected.type,
                                     symbolSwapKit: chain,
                                     blockchain: pioneer_coins_1.COIN_MAP_LONG[chain] || 'unknown',
@@ -427,14 +436,14 @@ class SDK {
                                 //   );
                                 if (pubkeyForPath) {
                                     pubkey = {
-                                        context: this.context,
+                                        context: this.context, // TODO this is not right?
                                         networkId: blockchain,
                                         symbol: pubkeyForPath.symbol,
                                         symbolSwapKit: chain,
                                         type: pubkeyForPath.type,
                                         blockchain: pioneer_coins_1.COIN_MAP_LONG[chain] || 'unknown',
-                                        master: address,
-                                        address,
+                                        master: address, //TODO this is probally wrong, get address for path
+                                        address, //TODO get next unused address and save it here!
                                         pubkey: pubkeyForPath.xpub,
                                         xpub: pubkeyForPath.xpub,
                                     };

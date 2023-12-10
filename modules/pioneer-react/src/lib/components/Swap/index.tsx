@@ -44,7 +44,7 @@ const MODAL_STRINGS = {
 };
 
 const Swap = () => {
-  const { state, onStart } = usePioneer();
+  const { state, hideModal } = usePioneer();
   const { txid } = useParams<{ txid?: string }>();
   const { app, assetContext, outboundAssetContext, blockchainContext } = state;
   // tabs
@@ -193,7 +193,6 @@ const Swap = () => {
         openModal(MODAL_STRINGS.pending);
       }
     }
-    onStart();
   }, []);
 
   const handleClickContinue = () => {
@@ -264,6 +263,12 @@ const Swap = () => {
     }
   };
 
+  let onSelect = (asset: any) => {
+    console.log("asset: ",asset)
+    onClose()
+    hideModal();
+  }
+
   return (
     <Box>
       {/* <ForkMeBanner /> */}
@@ -276,7 +281,7 @@ const Swap = () => {
             {/* Render content based on modalType */}
             {modalType === MODAL_STRINGS.selectAsset && (
               <div>
-                <AssetSelect onClose={onClose} />
+                <AssetSelect onClose={onClose} onSelect={onSelect} />
               </div>
             )}
             {modalType === MODAL_STRINGS.selectOutbound && (
@@ -326,7 +331,7 @@ const Swap = () => {
         p="2rem"
         w="35rem"
       >
-        {tabIndex === 1 ? (
+
           <div>
             {step > 1 ? (
               <div>
@@ -354,9 +359,7 @@ const Swap = () => {
               <div />
             )}
           </div>
-        ) : (
-          <div />
-        )}
+
       </Flex>
     </Box>
   );

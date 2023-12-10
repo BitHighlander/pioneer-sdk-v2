@@ -36,6 +36,7 @@ import MiddleEllipsis from '../../components/MiddleEllipsis';
 import Onboarding from '../../components/Onboarding';
 import Swap from '../../components/Swap';
 import Transfer from '../../components/Transfer';
+import Portfolio from '../../components/Portfolio'
 import {
   getWalletBadgeContent,
   getWalletContent,
@@ -81,7 +82,7 @@ const Pioneer = () => {
     let pioneerUrl = localStorage.getItem('pioneerUrl');
     if (balances.length === 0 && !pioneerUrl) {
       onOpen();
-      setModalType('Onboarding');
+      setModalType('ONBOARDING');
     }
     onStart();
   }, [balances]);
@@ -237,7 +238,7 @@ const Pioneer = () => {
               </div>
             )}
             {modalType === 'RECEIVE' && <div>RECEIVE</div>}
-            {modalType === 'PORTFOLIO' && <div>PORTFOLIO</div>}
+            {modalType === 'PORTFOLIO' && <div><Portfolio></Portfolio></div>}
             {modalType === 'SWAP' && (
               <div>
                 <Swap />
@@ -328,19 +329,17 @@ const Pioneer = () => {
             width="100%"
           >
             <Flex justify="space-around" wrap="wrap">
-              {' '}
-              {/* Flex container for the buttons */}
-              {/* Portfolio Button */}
               <Flex align="center" direction="column" m={2}>
                 <IconButton
                   aria-label="Portfolio"
                   colorScheme="green"
+                  onClick={() => modalSelected('PORTFOLIO')}
                   icon={<FaRegMoneyBillAlt />}
                   rounded="full"
                   size="lg"
                   variant="solid"
                 />
-                <Text fontSize="xs">Portfolio</Text>
+                <Text fontSize="xs"></Text>
               </Flex>
               {/* Send Button */}
               <Flex align="center" direction="column" m={2}>

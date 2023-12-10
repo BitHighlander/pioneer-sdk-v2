@@ -83,7 +83,7 @@ const CHAINS: any = {
 const CHAINS_WITH_TOKENS = [
   "BTC",
   ...Object.keys(CHAINS).filter(
-    (chain) => CHAINS[chain].hasTokens && chain !== "BTC"
+      (chain) => CHAINS[chain].hasTokens && chain !== "BTC"
   ),
 ];
 
@@ -153,7 +153,7 @@ export default function OutputSelect({ onClose }: any) {
         // console.log("app.swapKit: ", await app.swapKit.getWalletByChain("ETH"));
         // get eth
         const ethBalance = balances.filter(
-          (balance: any) => balance.symbol === "ETH"
+            (balance: any) => balance.symbol === "ETH"
         );
         // console.log("ethBalance!: ", ethBalance);
         addressForAsset = ethBalance[0].address;
@@ -301,104 +301,104 @@ export default function OutputSelect({ onClose }: any) {
 
   const renderChainTabs = () => {
     return Object.keys(CHAINS_WITH_TOKENS).map((chainKey: any, index: any) => (
-      <Tab key={index}>
-        {" "}
-        <Avatar
-          size="md"
-          src={`https://pioneers.dev/coins/${
-            COIN_MAP_LONG[CHAINS_WITH_TOKENS[chainKey]]
-          }.png`}
-        />
-        <br />
-        {/* {CHAINS[CHAINS_WITH_TOKENS[chainKey]]?.name} */}
-      </Tab>
+        <Tab key={index}>
+          {" "}
+          <Avatar
+              size="md"
+              src={`https://pioneers.dev/coins/${
+                  COIN_MAP_LONG[CHAINS_WITH_TOKENS[chainKey]]
+              }.png`}
+          />
+          <br />
+          {/* {CHAINS[CHAINS_WITH_TOKENS[chainKey]]?.name} */}
+        </Tab>
     ));
   };
 
   const renderChainPanels = () => {
     return Object.keys(CHAINS_WITH_TOKENS).map((index) => (
-      <TabPanel key={index}>
-        {isLoading ? (
-          <div>
-            <Spinner />
-          </div>
-        ) : (
-          <div>
-            {currentPage.map((asset: any, index: number) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Box key={index}>
-                <Flex
-                  alignItems="center"
-                  borderRadius="md"
-                  border="1px solid #fff"
-                  bg="black"
-                  boxShadow="sm"
-                  padding={2}
-                >
-                  <Avatar
-                    size="md"
-                    src={
-                      asset?.image ||
-                      `https://pioneers.dev/coins/${
-                        COIN_MAP_LONG[asset?.symbol]
-                      }.png`
-                    }
-                  />
-                  <Box ml={3}>
-                    <Text fontSize="sm">Asset: {asset?.symbol}</Text>
-                    <Text fontSize="sm">{asset?.name}</Text>
-                  </Box>
-                  <Button
-                    ml="auto"
-                    onClick={() => handleSelectClick(asset)}
-                    size="sm"
-                    variant="outline"
-                  >
-                    Select
-                  </Button>
-                </Flex>
-              </Box>
-            ))}
-          </div>
-        )}
-      </TabPanel>
+        <TabPanel key={index}>
+          {isLoading ? (
+              <div>
+                <Spinner />
+              </div>
+          ) : (
+              <div>
+                {currentPage.map((asset: any, index: number) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <Box key={index}>
+                      <Flex
+                          alignItems="center"
+                          borderRadius="md"
+                          border="1px solid #fff"
+                          bg="black"
+                          boxShadow="sm"
+                          padding={2}
+                      >
+                        <Avatar
+                            size="md"
+                            src={
+                                asset?.image ||
+                                `https://pioneers.dev/coins/${
+                                    COIN_MAP_LONG[asset?.symbol]
+                                }.png`
+                            }
+                        />
+                        <Box ml={3}>
+                          <Text fontSize="sm">Asset: {asset?.symbol}</Text>
+                          <Text fontSize="sm">{asset?.name}</Text>
+                        </Box>
+                        <Button
+                            ml="auto"
+                            onClick={() => handleSelectClick(asset)}
+                            size="sm"
+                            variant="outline"
+                        >
+                          Select
+                        </Button>
+                      </Flex>
+                    </Box>
+                ))}
+              </div>
+          )}
+        </TabPanel>
     ));
   };
 
   return (
-    <Stack spacing={4}>
-      <InputGroup>
-        <InputLeftElement pointerEvents="none">
-          <Search2Icon color="gray.300" />
-        </InputLeftElement>
-        <Input
-          onChange={handleSearchChange}
-          placeholder="Bitcoin..."
-          type="text"
-          value={search}
-        />
-      </InputGroup>
-      <Box>
-        <Tabs maxW="lg" mx="auto" onChange={handleTabChange}>
-          <TabList>{renderChainTabs()}</TabList>
+      <Stack spacing={4}>
+        <InputGroup>
+          <InputLeftElement pointerEvents="none">
+            <Search2Icon color="gray.300" />
+          </InputLeftElement>
+          <Input
+              onChange={handleSearchChange}
+              placeholder="Bitcoin..."
+              type="text"
+              value={search}
+          />
+        </InputGroup>
+        <Box>
+          <Tabs maxW="lg" mx="auto" onChange={handleTabChange}>
+            <TabList>{renderChainTabs()}</TabList>
 
-          <TabPanels>{renderChainPanels()}</TabPanels>
-        </Tabs>
-      </Box>
-      <Flex justifyContent="space-between" mt={4}>
-        <Button
-          isDisabled={currentPageIndex === 0}
-          onClick={() => setCurrentPageIndex(currentPageIndex - 1)}
-        >
-          Previous Page
-        </Button>
-        <Button
-          isDisabled={currentPage.length < itemsPerPage}
-          onClick={() => setCurrentPageIndex(currentPageIndex + 1)}
-        >
-          Next Page
-        </Button>
-      </Flex>
-    </Stack>
+            <TabPanels>{renderChainPanels()}</TabPanels>
+          </Tabs>
+        </Box>
+        <Flex justifyContent="space-between" mt={4}>
+          <Button
+              isDisabled={currentPageIndex === 0}
+              onClick={() => setCurrentPageIndex(currentPageIndex - 1)}
+          >
+            Previous Page
+          </Button>
+          <Button
+              isDisabled={currentPage.length < itemsPerPage}
+              onClick={() => setCurrentPageIndex(currentPageIndex + 1)}
+          >
+            Next Page
+          </Button>
+        </Flex>
+      </Stack>
   );
 }

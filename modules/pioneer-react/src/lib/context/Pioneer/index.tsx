@@ -17,17 +17,18 @@
 
 */
 // @ts-ignore
-import { ChainToNetworkId, getChainEnumValue } from '@coinmasters/types';
+import { ChainToNetworkId, getChainEnumValue, availableChainsByWallet } from '@coinmasters/types';
 import EventEmitter from 'events';
 import {
   createContext,
   useContext,
   useMemo,
   useReducer,
+  useEffect,  
   // useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-
+import transactionDB from './txDb';
 import { SDK } from '@pioneer-sdk/sdk';
 // import { availableChainsByWallet } from './support';
 
@@ -261,6 +262,43 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   const [state, dispatch] = useReducer(reducer, initialState);
   // const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    transactionDB
+        .initDB()
+        .catch((err: any) => console.error('Failed to initialize database:', err));
+  }, []);
+
+  // Create transaction entry
+  const createTx = (newTx: any) => {
+    console.log('CREATE_TX');
+    transactionDB
+        .createTransaction(newTx)
+        .then((id: number) => console.log(`Transaction created with ID: ${id}`))
+        .catch((err: any) => console.error('Error creating transaction:', err));
+  };
+
+  // Update transaction
+  const updateTx = (txid: string, newState: any) => {
+    console.log('UPDATE_TX');
+    transactionDB
+        .updateTransaction(txid, newState)
+        .then(() => console.log(`Transaction ${txid} updated to state ${newState}`))
+        .catch((err: any) => console.error('Error updating transaction:', err));
+  };
+
+  // Read transaction
+  const readTx = async (txid?: string) => {
+    console.log('READ_TX');
+    if (txid) {
+      console.log('txid: ', txid);
+      return await transactionDB.getTransaction(txid)
+    } else {
+      console.log('READ ALL: ');
+      return await transactionDB.getAllTransactions()
+    }
+  };
+
+
   const resetState = () => {
     console.log('RESET_STATE');
     // @ts-ignore
@@ -388,6 +426,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
   // @eslint-ignore
   const onStart = async function (wallets: any, setup: any) {
     try {
+      if(!wallets) throw Error("Wallets are required for OnStart!")
       console.log('onStart: ', wallets);
       console.log('setup: ', setup);
       // const serviceKey: string | null = localStorage.getItem("serviceKey"); // KeepKey api key
@@ -463,7 +502,7 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       }
 
       // @ts-ignore
-      const api = await appInit.init(wallets);
+      const api = await appInit.init(wallets, setup);
 
       // set wallets to available wallets
       // @ts-ignore
@@ -514,31 +553,33 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
       });
 
       if (lastConnectedWallet) {
-        // console.log('Loading from cache!');
-        // await appInit.setContext(lastConnectedWallet);
-        // //get wallet type
-        // const walletType = lastConnectedWallet.split(':')[0];
-        // console.log('walletType: ', walletType);
-        // //set blockchains
-        // let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
-        // let allByCaip = blockchainsForContext.map((chainStr) => {
-        //   const chainEnum = getChainEnumValue(chainStr);
-        //   return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
-        // });
-        // console.log('allByCaip: ', allByCaip);
-        // await appInit.setBlockchains(allByCaip);
-        //
-        // // balance cache
-        // let balanceCache: any = localStorage.getItem(lastConnectedWallet + ':balanceCache');
-        // balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
-        // console.log('balanceCache: ', balanceCache);
-        // await appInit.loadBalanceCache(balanceCache);
-        //
-        // // pubkey cache
-        // let pubkeyCache: any = localStorage.getItem(lastConnectedWallet + ':pubkeyCache');
-        // pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
-        // console.log('pubkeyCache: ', pubkeyCache);
-        // await appInit.loadPubkeyCache(pubkeyCache);
+        console.log('Loading from cache!');
+        // @ts-ignore
+        await appInit.setContext(lastConnectedWallet);
+        //get wallet type
+        const walletType = lastConnectedWallet.split(':')[0];
+        console.log('walletType: ', walletType);
+        //set blockchains
+        let blockchainsForContext = availableChainsByWallet[walletType.toUpperCase()];
+        let allByCaip = blockchainsForContext.map((chainStr: any) => {
+          const chainEnum = getChainEnumValue(chainStr);
+          return chainEnum ? ChainToNetworkId[chainEnum] : undefined;
+        });
+        console.log('allByCaip: ', allByCaip);
+        // @ts-ignore
+        await appInit.setBlockchains(allByCaip);
+
+        // balance cache
+        let balanceCache: any = localStorage.getItem(lastConnectedWallet + ':balanceCache');
+        balanceCache = balanceCache ? JSON.parse(balanceCache) : [];
+        console.log('balanceCache: ', balanceCache);
+        await appInit.loadBalanceCache(balanceCache);
+
+        // pubkey cache
+        let pubkeyCache: any = localStorage.getItem(lastConnectedWallet + ':pubkeyCache');
+        pubkeyCache = pubkeyCache ? JSON.parse(pubkeyCache) : [];
+        console.log('pubkeyCache: ', pubkeyCache);
+        await appInit.loadPubkeyCache(pubkeyCache);
       }
     } catch (e) {
       console.error(e);
@@ -567,7 +608,15 @@ export const PioneerProvider = ({ children }: { children: React.ReactNode }): JS
 export interface UsePioneerType {
   state: any;
   dispatch: any;
-  onStart: () => void;
+  onStart: (wallets: any, setup: any) => void;
+  setIntent: (intent: any) => void;
+  showModal: (modal: any) => void;
+  hideModal: () => void;
+  clearHardwareError: () => void;
+  createTx: (tx: any) => void;
+  updateTx: (tx: any) => void;
+  readTx: (tx?: any) => void;
+  resetState: () => void;
   connectWallet: (wallet: string, chain?: any) => void;
 }
 

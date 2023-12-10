@@ -8,7 +8,7 @@ import "@fontsource/plus-jakarta-sans/latin.css";
 import Pioneer from "./lib/components/Pioneer";
 import { PioneerProvider, usePioneer } from "./lib/context/Pioneer";
 import { theme } from "./lib/styles/theme";
-import Balances from "./lib/components/pioneer/Pioneer/Balances";
+import Balances from "./lib/components/Balances";
 import Pubkeys from "./lib/components/Pubkeys";
 import Paths from "./lib/components/Paths";
 import Swap from "./lib/components/Swap";
