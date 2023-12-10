@@ -25,7 +25,7 @@ export default function Balance({ onClose, balance }: any) {
           {Object.entries(data).map(([key, value]) => (
             <Tr key={key}>
               <Td>{key}</Td>
-              {/*<Td>{value}</Td>*/}
+              <Td>{value as string}</Td>
             </Tr>
           ))}
         </Tbody>

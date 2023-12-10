@@ -216,7 +216,6 @@ class SDK {
                         (await this.swapKit[walletSelected.wallet.connectMethodName](AllChainsSupported, walletPaths)) || '';
                     console.log('resultPair: ', resultPair);
                     this.keepkeyApiKey = resultPair;
-                    localStorage.setItem('keepkeyApiKey', resultPair);
                 }
                 else if (walletSelected.type === 'METAMASK') {
                     resultPair =
@@ -504,7 +503,7 @@ class SDK {
                             }
                             console.log('balance: ', balance);
                             let balanceString = {};
-                            if (!balance.chain || !balance.symbol || !balance.ticker || !balance.type) {
+                            if (!balance.chain || !balance.symbol || !balance.ticker || !balance.type || !balance.address) {
                                 console.error('chain: ', balance);
                                 // console.error('chain: ', balance[0]);
                                 // console.error('chain: ', balance[0].chain);
@@ -527,6 +526,7 @@ class SDK {
                                         balanceString.symbol = balance.symbol;
                                         balanceString.chain = balance.chain;
                                         balanceString.ticker = balance.ticker;
+                                        balanceString.address = balance.address;
                                         balanceString.type = balance.type;
                                         balanceString.balance = balance.toFixed(balance.decimal).toString();
                                         balances.push(balanceString);

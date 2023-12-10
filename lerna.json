@@ -10,7 +10,7 @@
     }
   },
   "packages": [
-    "modules/**/*",
+    "modules/**/*"
   ],
   "version": "independent",
   "useWorkspaces": true

@@ -3,7 +3,7 @@ import { Avatar, Box, Button, Flex, HStack, Spinner, Text } from '@chakra-ui/rea
 // @ts-ignore
 import { COIN_MAP_LONG } from '@pioneer-platform/pioneer-coins';
 import React, { useEffect } from 'react';
-
+import MiddleEllipsis from '../../MiddleEllipsis';
 // @ts-ignore
 import { usePioneer } from '../../../context/Pioneer';
 
@@ -95,6 +95,9 @@ const BeginSwap: React.FC<BeginSwapProps> = ({ openModal, handleClick, selectedB
                 <Box border="1px solid #fff" borderRadius="8px" width="100%">
                   <Text>Asset: {assetContext?.ticker}</Text>
                 </Box>
+                <Box border="1px solid #fff" borderRadius="8px" width="100%">
+                  <MiddleEllipsis text={assetContext?.address} />
+                </Box>
               </>
             )}
           </Box>
@@ -131,28 +134,31 @@ const BeginSwap: React.FC<BeginSwapProps> = ({ openModal, handleClick, selectedB
                 <Box border="1px solid #fff" borderRadius="8px" width="100%">
                   <Text>Asset: {outboundAssetContext?.ticker}</Text>
                 </Box>
+                <Box border="1px solid #fff" borderRadius="8px" width="100%">
+                  <MiddleEllipsis text={outboundAssetContext?.address} />
+                </Box>
               </div>
             )}
           </Box>
         </HStack>
       </Flex>
       <Flex alignItems="center" bg="black" justifyContent="center" mx="auto" p="2rem">
-        <Button
-          colorScheme={selectedButton === 'quick' ? 'blue' : 'gray'}
-          onClick={() => handleClick('quick')}
-          variant="outline"
-          width="48%"
-        >
-          Quick
-        </Button>
-        <Button
-          colorScheme={selectedButton === 'precise' ? 'blue' : 'gray'}
-          onClick={() => handleClick('precise')}
-          variant="outline"
-          width="48%"
-        >
-          Precise
-        </Button>
+        {/*<Button*/}
+        {/*  colorScheme={selectedButton === 'quick' ? 'blue' : 'gray'}*/}
+        {/*  onClick={() => handleClick('quick')}*/}
+        {/*  variant="outline"*/}
+        {/*  width="48%"*/}
+        {/*>*/}
+        {/*  Quick*/}
+        {/*</Button>*/}
+        {/*<Button*/}
+        {/*  colorScheme={selectedButton === 'precise' ? 'blue' : 'gray'}*/}
+        {/*  onClick={() => handleClick('precise')}*/}
+        {/*  variant="outline"*/}
+        {/*  width="48%"*/}
+        {/*>*/}
+        {/*  Precise*/}
+        {/*</Button>*/}
       </Flex>
     </div>
   );

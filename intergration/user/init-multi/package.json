@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.18.0",
+    "@coinmasters/wallet-keepkey": "latest",
+    "@coinmasters/wallet-keystore": "latest",
     "@keepkey/device-protocol": "^7.11.2",
     "@keepkey/hdwallet-keepkey-rest": "^1.40.29",
     "@pioneer-platform/keepkey": "^3.0.1",
@@ -35,7 +37,8 @@
     "assert": "^2.0.0",
     "crypto-js": "^4.1.1",
     "dotenv": "^6.2.0",
-    "typescript": "4.6.4"
+    "typescript": "4.6.4",
+    "wait-promise": "^0.4.1"
   },
   "gitHead": "54da909f74f91cd10e6161a06aa75638c147ff96"
 }

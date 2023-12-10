@@ -320,7 +320,6 @@ export class SDK {
                         )) || '';
                     console.log('resultPair: ', resultPair);
                     this.keepkeyApiKey = resultPair;
-                    localStorage.setItem('keepkeyApiKey', resultPair);
                 } else if (walletSelected.type === 'METAMASK') {
                     resultPair =
                         (await (this.swapKit as any)[walletSelected.wallet.connectMethodName](
@@ -610,7 +609,7 @@ export class SDK {
                             }
                             console.log('balance: ', balance);
                             let balanceString: any = {};
-                            if (!balance.chain || !balance.symbol || !balance.ticker || !balance.type) {
+                            if (!balance.chain || !balance.symbol || !balance.ticker || !balance.type || !balance.address) {
                                 console.error('chain: ', balance);
                                 // console.error('chain: ', balance[0]);
                                 // console.error('chain: ', balance[0].chain);
@@ -637,6 +636,7 @@ export class SDK {
                                         balanceString.symbol = balance.symbol;
                                         balanceString.chain = balance.chain;
                                         balanceString.ticker = balance.ticker;
+                                        balanceString.address = balance.address;
                                         balanceString.type = balance.type;
                                         balanceString.balance = balance.toFixed(balance.decimal).toString();
                                         balances.push(balanceString);
